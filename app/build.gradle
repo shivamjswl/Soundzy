@@ -1,0 +1,58 @@
+plugins { id 'com.android.application' }
+def googleClient = providers.gradleProperty('googleWebClientId').getOrElse('')
+def googleEnabled = !googleClient.isBlank() || providers.gradleProperty('googleSignIn').getOrElse('false').toBoolean()
+android {
+    namespace 'app.cadence'
+    compileSdk 36
+    buildToolsVersion "36.0.0"
+    defaultConfig {
+        applicationId 'app.cadence'
+        minSdk 36
+        targetSdk 36
+        versionCode 3
+        versionName '0.3.0'
+        resValue 'string', 'app_version', versionName
+        resValue 'string', 'google_web_client_id', googleClient
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    sourceSets.main.java.srcDir(googleEnabled ? 'src/google/java' : 'src/noGoogle/java')
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildTypes { release { minifyEnabled false } }
+    testOptions {
+        unitTests.includeAndroidResources = true
+        unitTests.all {
+            def testHome = layout.buildDirectory.dir('test-home').get().asFile
+            systemProperty 'user.home', testHome.absolutePath
+            systemProperty 'cadence.validation.dir', rootProject.file('validation').absolutePath
+            doFirst { testHome.mkdirs() }
+            systemProperty 'robolectric.dependency.repo.url', 'https://repo.maven.apache.org/maven2'
+            ['https.proxyHost','https.proxyPort','http.proxyHost','http.proxyPort','http.nonProxyHosts'].each { key ->
+                if (System.getProperty(key) != null) systemProperty key, System.getProperty(key)
+            }
+        }
+    }
+    lint { abortOnError true }
+}
+dependencies {
+    implementation project(':extractor')
+    if (googleEnabled) {
+        implementation 'androidx.credentials:credentials:1.5.0'
+        implementation 'androidx.credentials:credentials-play-services-auth:1.5.0'
+        implementation 'com.google.android.libraries.identity.googleid:googleid:1.1.1'
+    }
+    implementation 'org.jsoup:jsoup:1.23.2'
+    implementation 'de.sciss:jump3r:1.0.5'
+    implementation 'androidx.media3:media3-exoplayer:1.7.1'
+    implementation 'androidx.media3:media3-session:1.7.1'
+    implementation 'androidx.concurrent:concurrent-futures:1.2.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
+    testImplementation 'org.robolectric:robolectric:4.16.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test:core:1.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+}
