@@ -1,0 +1,90 @@
+{
+  "framework_api_levels": [
+    34,
+    35,
+    36,
+    37
+  ],
+  "cases": [
+    {
+      "test": "createsCustomPlaylistFromDownloadsWithoutSearching[34]",
+      "passed": true
+    },
+    {
+      "test": "blankNameKeepsDialogOpenAndKeyboardDoneSaves[34]",
+      "passed": true
+    },
+    {
+      "test": "downloadedSongsExposeAddToPlaylistWithoutOpeningAMenu[34]",
+      "passed": true
+    },
+    {
+      "test": "createsOwnPlaylistImmediatelyAndPersistsIt[34]",
+      "passed": true
+    },
+    {
+      "test": "addsDownloadsToAnExistingEmptyPlaylist[34]",
+      "passed": true
+    },
+    {
+      "test": "createsCustomPlaylistFromDownloadsWithoutSearching[35]",
+      "passed": true
+    },
+    {
+      "test": "blankNameKeepsDialogOpenAndKeyboardDoneSaves[35]",
+      "passed": true
+    },
+    {
+      "test": "downloadedSongsExposeAddToPlaylistWithoutOpeningAMenu[35]",
+      "passed": true
+    },
+    {
+      "test": "createsOwnPlaylistImmediatelyAndPersistsIt[35]",
+      "passed": true
+    },
+    {
+      "test": "addsDownloadsToAnExistingEmptyPlaylist[35]",
+      "passed": true
+    },
+    {
+      "test": "createsCustomPlaylistFromDownloadsWithoutSearching[36]",
+      "passed": true
+    },
+    {
+      "test": "blankNameKeepsDialogOpenAndKeyboardDoneSaves[36]",
+      "passed": true
+    },
+    {
+      "test": "downloadedSongsExposeAddToPlaylistWithoutOpeningAMenu[36]",
+      "passed": true
+    },
+    {
+      "test": "createsOwnPlaylistImmediatelyAndPersistsIt[36]",
+      "passed": true
+    },
+    {
+      "test": "addsDownloadsToAnExistingEmptyPlaylist[36]",
+      "passed": true
+    },
+    {
+      "test": "createsCustomPlaylistFromDownloadsWithoutSearching",
+      "passed": true
+    },
+    {
+      "test": "blankNameKeepsDialogOpenAndKeyboardDoneSaves",
+      "passed": true
+    },
+    {
+      "test": "downloadedSongsExposeAddToPlaylistWithoutOpeningAMenu",
+      "passed": true
+    },
+    {
+      "test": "createsOwnPlaylistImmediatelyAndPersistsIt",
+      "passed": true
+    },
+    {
+      "test": "addsDownloadsToAnExistingEmptyPlaylist",
+      "passed": true
+    }
+  ]
+}

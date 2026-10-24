@@ -86,7 +86,6 @@ public final class MainActivity extends Activity {
         handler.removeCallbacksAndMessages(null);unregisterReceiver(downloadsChanged);network.shutdownNow();files.shutdownNow();images.shutdownNow();
         if(player!=null)player.removeListener(listener);if(connection!=null)MediaController.releaseFuture(connection);if(nowDialog!=null)nowDialog.dismiss();super.onDestroy();
     }
-    @Override public void onBackPressed(){goBack();}
     private void goBack(){
         if(tab.equals("youtube-playlist")){tab=remoteBack;render();}
         else if(playlistId!=null){playlistId=null;render();}
@@ -276,6 +275,7 @@ public final class MainActivity extends Activity {
         LinearLayout tools=row();tools.addView(icon("back",FG,()->{playlistId=null;render();}));tools.addView(text("YOUR COLLECTION",11,MUTED,true),new LinearLayout.LayoutParams(0,-2,1));if(!playlistId.equals("liked"))tools.addView(icon("more",FG,this::playlistOptions));add(body,tools,48);
         space(body,18);Icons art=icon(playlistId.equals("liked")?"liked":"music",GREEN,null);art.setBackground(bg(0xff2c3c25,24));LinearLayout.LayoutParams ap=new LinearLayout.LayoutParams(dp(130),dp(130));ap.gravity=Gravity.CENTER_HORIZONTAL;body.addView(art,ap);space(body,22);
         add(body,text(playlistName,32,FG,true),-2);List<Track> songs=app.library.playlistTracks(playlistId);space(body,6);add(body,text(songs.size()+" songs · Made by you",13,MUTED,false),-2);space(body,20);
+        if(!downloadedTracks().isEmpty()){add(body,button("Add downloaded songs",false,()->selectDownloadedSongs(playlistId,null)),48);space(body,12);}
         if(!songs.isEmpty()){
             LinearLayout controls=row();controls.addView(button("▶  Play",true,()->play(songs,0,false)),new LinearLayout.LayoutParams(0,dp(50),1));TextView shuffle=button("Shuffle",false,()->play(songs,0,true));LinearLayout.LayoutParams bp=new LinearLayout.LayoutParams(0,dp(50),1);bp.leftMargin=dp(10);controls.addView(shuffle,bp);add(body,controls,-2);space(body,18);for(Track t:songs)trackRow(body,t,songs,true);
         }else empty("Make room for your favorites","Find a song, tap the three dots, then choose Add to playlist.","music","Find songs",()->navigate("search"));
@@ -285,7 +285,11 @@ public final class MainActivity extends Activity {
         List<Library.Download> downloads=app.library.downloads();List<Track> available=new ArrayList<>();long bytes=0;
         for(var d:downloads){String path=app.library.offline(d.track().id());if(path!=null){available.add(d.track());bytes+=new java.io.File(path).length();}}
         LinearLayout summary=row();summary.setBackground(border(SURFACE,18));inset(summary,16);summary.addView(icon("download",GREEN,null));LinearLayout copy=column();copy.addView(text(available.size()+" songs offline",18,FG,true));copy.addView(text(String.format(Locale.ROOT,"%.1f MB on this device",bytes/1048576.0),12,MUTED,false));summary.addView(copy,new LinearLayout.LayoutParams(0,-2,1));add(body,summary,88);space(body,18);
-        if(!available.isEmpty()){add(body,button("Play offline collection",true,()->play(available,0,false)),48);space(body,16);}
+        if(!available.isEmpty()){
+            add(body,button("Play offline collection",true,()->play(available,0,false)),48);space(body,10);
+            add(body,button("Create playlist from downloads",false,this::createOfflinePlaylist),48);space(body,10);
+            add(body,text("Choose downloaded songs for your own playlist. Find it later in Library.",12,MUTED,false),-2);space(body,16);
+        }
         if(downloads.isEmpty())empty("Your music, even without Wi-Fi","Find a song, open its menu, and choose Save offline. Downloads stay in the app until you remove them.","download","Find songs",()->navigate("search"));
         for(var d:downloads){
             if(app.library.offline(d.track().id())!=null&&!d.status().equals("converting")){trackRow(body,d.track(),available,false);if(!d.error().isBlank())add(body,text(d.error(),12,MUTED,false),-2);}
@@ -301,7 +305,7 @@ public final class MainActivity extends Activity {
         LinearLayout r=row();r.setPadding(0,dp(7),0,dp(7));
         FrameLayout art=artwork(t,54);r.addView(art,new LinearLayout.LayoutParams(dp(54),dp(54)));
         LinearLayout copy=column();copy.setPadding(dp(13),0,dp(3),0);copy.addView(label(t.title(),15,FG,true));space(copy,5);copy.addView(label((app.library.offline(t.id())!=null?"↓  ":"")+t.artist()+ (t.duration()>0?" · "+time(t.duration()*1000):""),12,MUTED,false));r.addView(copy,new LinearLayout.LayoutParams(0,-2,1));
-        Icons more=icon("more",MUTED,()->songMenu(t,inPlaylist));more.setContentDescription("Options for "+t.title());r.addView(more);r.setOnClickListener(v->{int index=0;for(int i=0;i<queue.size();i++)if(queue.get(i).id().equals(t.id())){index=i;break;}play(queue,index,false);});r.setContentDescription("Play "+t.title()+" by "+t.artist());parent.addView(r,new LinearLayout.LayoutParams(-1,dp(76)));
+        Icons add=icon("add",GREEN,()->choosePlaylist(t));add.setContentDescription("Add "+t.title()+" to playlist");r.addView(add);Icons more=icon("more",MUTED,()->songMenu(t,inPlaylist));more.setContentDescription("Options for "+t.title());r.addView(more);r.setOnClickListener(v->{int index=0;for(int i=0;i<queue.size();i++)if(queue.get(i).id().equals(t.id())){index=i;break;}play(queue,index,false);});r.setContentDescription("Play "+t.title()+" by "+t.artist());parent.addView(r,new LinearLayout.LayoutParams(-1,dp(76)));
     }
     private void empty(String title,String subtitle,String symbol,String action,Runnable click){
         LinearLayout box=column();inset(box,22);box.setBackground(bg(SURFACE,20));Icons i=icon(symbol,GREEN,null);box.addView(i);space(box,12);box.addView(text(title,20,FG,true));space(box,8);TextView copy=text(subtitle,13,MUTED,false);copy.setLineSpacing(dp(3),1);box.addView(copy);if(action!=null){space(box,18);box.addView(button(action,true,click),new LinearLayout.LayoutParams(-2,dp(48)));}add(body,box,-2);
@@ -382,12 +386,56 @@ public final class MainActivity extends Activity {
         List<Library.Playlist> lists=app.library.playlists();ArrayList<String> names=new ArrayList<>();names.add("+ Create a new playlist");for(var p:lists)names.add(p.name());
         new AlertDialog.Builder(this).setTitle("Add to playlist").setItems(names.toArray(new String[0]),(d,index)->{if(index==0)createAndAdd(t);else{var p=lists.get(index-1);app.library.add(p.id(),t);toast("Added to "+p.name());}}).show();
     }
-    private void createAndAdd(Track t){nameDialog("New playlist","",name->{String id=app.library.createPlaylist(name);app.library.add(id,t);toast("Playlist created");if(tab.equals("library"))render();});}
-    private void editPlaylist(String id,String old){nameDialog(id==null?"New playlist":"Rename playlist",old,name->{if(id==null)app.library.createPlaylist(name);else{app.library.rename(id,name);playlistName=name.trim();}render();});}
+    private void openOwnPlaylist(String id){
+        Library.Playlist saved=app.library.playlists().stream().filter(item->item.id().equals(id)).findFirst().orElseThrow();
+        playlistId=id;playlistName=saved.name();tab="library";render();
+    }
+    private void createAndAdd(Track track){
+        nameDialog("New playlist","",name->{String id=app.library.importPlaylist(name,List.of(track));openOwnPlaylist(id);toast("Playlist created · Song added");});
+    }
+    private void editPlaylist(String id,String old){
+        nameDialog(id==null?"New playlist":"Rename playlist",old,name->{
+            if(id==null){openOwnPlaylist(app.library.createPlaylist(name));toast("Your playlist is ready");}
+            else{app.library.rename(id,name);openOwnPlaylist(id);}
+        });
+    }
     private interface NameAction{void accept(String name);}
     private void nameDialog(String title,String old,NameAction action){
-        EditText input=new EditText(this);input.setSingleLine(true);input.setText(old);input.setHint("Give it a name");input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(80)});input.setPadding(dp(24),dp(18),dp(24),dp(18));
-        AlertDialog dialog=new AlertDialog.Builder(this).setTitle(title).setView(input).setPositiveButton("Save",null).setNegativeButton("Cancel",null).create();dialog.setOnShowListener(d->dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{try{action.accept(input.getText().toString());dialog.dismiss();}catch(IllegalArgumentException e){input.setError(e.getMessage());}}));dialog.show();
+        LinearLayout content=column();inset(content,22);content.addView(text("Give your playlist a name.",14,MUTED,false));space(content,10);
+        EditText input=new EditText(this);input.setSingleLine(true);input.setText(old);input.setHint("Playlist name");input.setTextColor(FG);input.setHintTextColor(MUTED);
+        input.setInputType(android.text.InputType.TYPE_CLASS_TEXT|android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);input.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(80)});content.addView(input,new LinearLayout.LayoutParams(-1,dp(56)));
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle(title).setView(content).setPositiveButton("Save",null).setNegativeButton("Cancel",null).create();
+        dialog.show();
+        Runnable save=()->{
+            String name=input.getText().toString().trim();
+            if(name.isEmpty()){input.setError("Enter a playlist name");input.requestFocus();return;}
+            try{action.accept(name);hideKeyboard();dialog.dismiss();}
+            catch(IllegalArgumentException error){input.setError(error.getMessage());}
+            catch(android.database.SQLException error){input.setError("Couldn't save this playlist. Please try again.");}
+        };
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->save.run());
+        input.setOnEditorActionListener((v,event,key)->{if(event==EditorInfo.IME_ACTION_DONE){save.run();return true;}return false;});
+        input.requestFocus();input.setSelection(input.length());
+    }
+    private List<Track> downloadedTracks(){
+        List<Track> tracks=new ArrayList<>();for(Library.Download download:app.library.downloads())if(app.library.offline(download.track().id())!=null&&!download.status().equals("converting"))tracks.add(download.track());return tracks;
+    }
+    private void createOfflinePlaylist(){
+        if(downloadedTracks().isEmpty()){toast("Save songs offline first, or create an empty playlist in Library.");return;}
+        nameDialog("New offline playlist","",name->selectDownloadedSongs(null,name));
+    }
+    private void selectDownloadedSongs(String target,String newName){
+        List<Track> tracks=downloadedTracks();if(tracks.isEmpty()){toast("No downloaded songs are available yet.");return;}
+        String[] names=tracks.stream().map(track->track.title()+" · "+track.artist()).toArray(String[]::new);boolean[] checked=new boolean[tracks.size()];
+        AlertDialog picker=new AlertDialog.Builder(this).setTitle("Choose downloaded songs").setMultiChoiceItems(names,checked,(d,index,value)->checked[index]=value)
+            .setPositiveButton(target==null?"Create playlist":"Add songs",null).setNeutralButton("Select all",null).setNegativeButton("Cancel",null).create();picker.show();
+        picker.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v->{boolean all=true;for(boolean item:checked)all&=item;for(int i=0;i<checked.length;i++){checked[i]=!all;picker.getListView().setItemChecked(i,!all);}picker.getButton(AlertDialog.BUTTON_NEUTRAL).setText(all?"Select all":"Clear selection");});
+        picker.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
+            List<Track> selected=new ArrayList<>();for(int i=0;i<checked.length;i++)if(checked[i])selected.add(tracks.get(i));if(selected.isEmpty()){toast("Choose at least one downloaded song");return;}
+            try{String id=target;if(id==null)id=app.library.importPlaylist(newName,selected);else for(Track track:selected)app.library.add(id,track);picker.dismiss();openOwnPlaylist(id);toast("Downloaded songs added to your playlist");}
+            catch(android.database.SQLException error){toast("Couldn't save these songs. Your downloads are kept.");}
+        });
     }
     private void playlistOptions(){new AlertDialog.Builder(this).setTitle(playlistName).setItems(new String[]{"Rename playlist","Delete playlist"},(d,index)->{if(index==0)editPlaylist(playlistId,playlistName);else new AlertDialog.Builder(this).setTitle("Delete this playlist?").setMessage("Downloaded audio will stay in your offline library.").setPositiveButton("Delete",(dd,w)->{app.library.deletePlaylist(playlistId);playlistId=null;render();}).setNegativeButton("Keep",null).show();}).show();}
     private void download(Track track){
@@ -461,7 +509,7 @@ public final class MainActivity extends Activity {
         });dialog.show();
     }
     private void showAbout(){
-        new AlertDialog.Builder(this).setTitle("Soundzy · "+getString(R.string.app_version)).setMessage(getString(R.string.developed_by)+"\n\nYour music, in your frequency.\n\nAndroid 16+ · No account required\n\nSearch and stream YouTube audio and discover public playlists with the open-source NewPipe Extractor. For you suggestions use the most recently played artist when available; other filters use the selected mood. Optional Google sign-in saves only your name and email locally; it does not grant YouTube history access. Takeout exports are processed locally. Offline audio and optional MP3 conversion stay on this device. There are no in-app ads. YouTube availability and extraction can change; some videos may not play.\n\nPlaylists and downloads stay on this device. Uninstalling clears them. Audio files are kept in app-private storage. Search requests and playback connect directly to YouTube/Google; thumbnail requests connect to their image servers. No analytics or developer server.\n\nOnly download content you have permission to save. This app is not affiliated with YouTube or Spotify.\n\nOpen-source: GPL-3.0-or-later. NewPipe Extractor and nanojson: GPL-3.0-or-later and Apache-2.0 respectively; AndroidX Media3: Apache-2.0; OkHttp: Apache-2.0. Full notices are included with the source.").setNeutralButton("Account & history",(d,w)->navigate("account")).setPositiveButton("Got it",null).show();
+        new AlertDialog.Builder(this).setTitle("Soundzy · "+getString(R.string.app_version)).setMessage(getString(R.string.developed_by)+"\n\nYour music, in your frequency.\n\nAndroid 14+ · No account required\n\nSearch and stream YouTube audio and discover public playlists with the open-source NewPipe Extractor. For you suggestions use the most recently played artist when available; other filters use the selected mood. Optional Google sign-in saves only your name and email locally; it does not grant YouTube history access. Takeout exports are processed locally. Offline audio and optional MP3 conversion stay on this device. There are no in-app ads. YouTube availability and extraction can change; some videos may not play.\n\nPlaylists and downloads stay on this device. Uninstalling clears them. Audio files are kept in app-private storage. Search requests and playback connect directly to YouTube/Google; thumbnail requests connect to their image servers. No analytics or developer server.\n\nOnly download content you have permission to save. This app is not affiliated with YouTube or Spotify.\n\nOpen-source: GPL-3.0-or-later. NewPipe Extractor and nanojson: GPL-3.0-or-later and Apache-2.0 respectively; AndroidX Media3: Apache-2.0; OkHttp: Apache-2.0. Full notices are included with the source.").setNeutralButton("Account & history",(d,w)->navigate("account")).setPositiveButton("Got it",null).show();
     }
     private void hideKeyboard(){View focus=getCurrentFocus();if(focus!=null)getSystemService(InputMethodManager.class).hideSoftInputFromWindow(focus.getWindowToken(),0);}
     private void toast(String s){Toast.makeText(this,s,Toast.LENGTH_LONG).show();}

@@ -110,6 +110,17 @@ public final class FrameworkTest {
             assertNotNull(find(root,"Your Soundzy."));assertNotNull(find(root,"2. Choose history file"));assertFalse(find(root,"Sign in with Google").isEnabled());capture(root,"account-framework.png");
         }
     }
+    @Test public void userCanCreatePlaylistFromLibrary(){
+        Shadows.shadowOf(app).declareComponentUnbindable(new android.content.ComponentName(app,PlaybackService.class));
+        try(var controller=Robolectric.buildActivity(MainActivity.class).setup()){
+            View root=controller.get().getWindow().getDecorView();click(root,"Library");click(root,"+  Create playlist");Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            android.app.AlertDialog dialog=org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog();assertTrue(dialog.isShowing());
+            android.widget.EditText name=findInput(dialog.getWindow().getDecorView());assertNotNull(name);name.setText("My own playlist");
+            dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).performClick();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertTrue(app.library.playlists().stream().anyMatch(item->item.name().equals("My own playlist")));assertNotNull(find(root,"My own playlist"));assertFalse(dialog.isShowing());
+        }
+    }
+    private android.widget.EditText findInput(View view){if(view instanceof android.widget.EditText input)return input;if(view instanceof ViewGroup group)for(int i=0;i<group.getChildCount();i++){android.widget.EditText found=findInput(group.getChildAt(i));if(found!=null)return found;}return null;}
     private void awaitText(View root,String text)throws Exception{
         long deadline=System.nanoTime()+java.util.concurrent.TimeUnit.SECONDS.toNanos(5);
         do{Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();if(find(root,text)!=null)return;Thread.sleep(10);}while(System.nanoTime()<deadline);

@@ -3,14 +3,15 @@ def googleClient = providers.gradleProperty('googleWebClientId').getOrElse('')
 def googleEnabled = !googleClient.isBlank() || providers.gradleProperty('googleSignIn').getOrElse('false').toBoolean()
 android {
     namespace 'app.cadence'
-    compileSdk 36
-    buildToolsVersion "36.0.0"
+    buildFeatures { resValues = true }
+    compileSdk 37
+    buildToolsVersion "37.0.0"
     defaultConfig {
         applicationId 'app.cadence'
-        minSdk 36
-        targetSdk 36
-        versionCode 3
-        versionName '0.3.0'
+        minSdk 34
+        targetSdk 37
+        versionCode 4
+        versionName '0.4.0'
         resValue 'string', 'app_version', versionName
         resValue 'string', 'google_web_client_id', googleClient
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -20,10 +21,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    signingConfigs { debug { enableV2Signing = true; enableV3Signing = true } }
     buildTypes { release { minifyEnabled false } }
     testOptions {
         unitTests.includeAndroidResources = true
         unitTests.all {
+            maxHeapSize = '2g'
+            maxParallelForks = 1
+            // Android 16/17 shared-memory shadows need access to the JDK file-descriptor bridge.
+            jvmArgs '--add-exports=java.base/jdk.internal.access=ALL-UNNAMED'
             def testHome = layout.buildDirectory.dir('test-home').get().asFile
             systemProperty 'user.home', testHome.absolutePath
             systemProperty 'cadence.validation.dir', rootProject.file('validation').absolutePath
@@ -51,7 +57,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
-    testImplementation 'org.robolectric:robolectric:4.16.1'
+    testImplementation 'org.robolectric:robolectric:4.17'
     androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestImplementation 'androidx.test:core:1.6.1'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'

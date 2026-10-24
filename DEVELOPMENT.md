@@ -31,3 +31,11 @@ For 0.2.0, `PlaylistSource` is the contract for public playlist discovery and pa
 For Soundzy 0.3.0, the default APK uses the no-Google source set. The optional Google integration was compiled separately with `-PgoogleSignIn=true`; this does not authenticate a user. To enable real login, use your public Web OAuth client ID as documented in GOOGLE_SIGN_IN_SETUP.md and register the Android package/signing certificate in the same project.
 
 ResumableDownload is tested against a local MockWebServer with real HTTP bodies, range headers, connection loss, and 403 recovery. PcmMp3Encoder is tested with real PCM; its generated MP3 is independently inspected/decoded with ffprobe/ffmpeg. Android's MediaCodec-to-PCM path and Google account picker still require physical-device acceptance. The queue tests use a real unprepared ExoPlayer timeline, not a playback-service mock, to test stable queue identity and rendering without requiring hardware audio.
+
+## Android 14–17 compatibility build (0.4.0)
+
+The app's minimum SDK is 34; compile and target SDK are 37 (Android 17). Use Android SDK Platform 37.0, Build Tools 37.0.0, JDK 21, Android Gradle Plugin 9.3.3, and the checksum-pinned Gradle 9.5.0 wrapper. Shared prerequisites remain under /workspace/toolchains. The official current Android CLI can install SDK packages with `android --no-metrics --sdk=/absolute/sdk/path sdk install 'platforms;android-37.0' 'build-tools;37.0.0'`; the older `sdkmanager --licenses` flow is no longer used by the current CLI.
+
+Robolectric 4.17 supplies API 34, 35, 36, and 37. AndroidCompatibilityTest executes the actual naming/selection widgets and SQLite persistence on each framework. The desktop test JVM exports only `java.base/jdk.internal.access` to enable Robolectric's Android 16/17 shared-memory file-descriptor bridge; this flag is not an Android app permission or a runtime security change.
+
+A framework test is not a device install. The generic Android 17 install failure still needs package-manager output or a physical-device retry to diagnose. APK signatures and declared SDK range are verified separately. Keep the existing signing key; changing it breaks in-place updates and is unrelated to the visible app rename.

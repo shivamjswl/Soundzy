@@ -1,42 +1,37 @@
-# Soundzy 0.3.0 validation
+# Soundzy 0.4.0 validation
 
-Checked on 24 October 2026. Original Cadence playback was reported working by the user on an Android phone; that is user-provided evidence, not a cloud reproduction of this update.
+Checked on 24 October 2026. The user clarified that the playlist issue was the lack of an obvious creation action from downloaded songs, rather than a confirmed Save-dialog failure. The prior 0.3.0 Library creation flow passed a baseline UI test before changes.
 
 | Check | Result |
 | --- | --- |
-| Default debug APK build | Passed |
-| APK identity | `app.cadence`, versionCode 3, versionName 0.3.0, visible label Soundzy |
-| Android requirements | min SDK 36, target SDK 36 |
-| APK signature | Verified; same certificate as the supplied Cadence 0.2.0 APK |
-| JVM / Android 16 framework tests | 51 passed; 0 failed; 0 skipped |
-| Android lint | 0 errors; 4 advisory warnings (storage allocation and localization) |
-| Optional Google integration | Compiled successfully with `-PgoogleSignIn=true` without inventing a client ID |
-| Default APK optional Google libraries | Not bundled; checked dex contents |
-| Google account picker / live authentication | Not executed: no OAuth client registrations supplied; setup guide included |
-| Takeout parser / import | Tested locally with JSON, HTML, BOM, duplicates, invalid links, limits, and preservation of existing metadata/timestamps |
-| Queue | Real ExoPlayer timeline tests for current/upcoming/earlier sections, shuffle coverage, stable identities after removal/reorder, empty state, and native-graphics rendering |
-| Download recovery | Real HTTP fixture tests for multiple ranges, mid-body disconnection, persisted partial-file resume, servers ignoring Range, expired-link 403 recovery, cancellation, and changed source identity |
-| MP3 encoding | Real PCM encoded to MP3; independently inspected and fully decoded by ffprobe/ffmpeg |
-| Android MediaCodec decoding / full on-device conversion | Not executed on a physical phone |
-| Live YouTube playback / downloads | Not verified in this cloud; proxy previously denied YouTube requests |
-| Instrumentation APK | Compiled; not executed (hardware acceleration unavailable; prior software emulator could not complete boot) |
+| Debug APK and instrumentation APK assembly | Passed |
+| APK identity | `app.cadence`, versionCode 4, versionName 0.4.0, label Soundzy |
+| Android SDK range | Minimum API 34 (Android 14), target/compile API 37 (Android 17), no maximum SDK |
+| APK crypto verification | Passed for API 34–37, v3 signature |
+| Upgrade signing key | Exact SHA-256 certificate digest matches 0.3.0 |
+| APK alignment | zipalign passed, including 16 KiB alignment validation |
+| ABI constraints | No native `.so` libraries or ABI-specific APK splits |
+| JVM/framework tests | 72 passed; 0 failed; 0 skipped |
+| Custom-playlist framework matrix | 5 tests on each of API 34/35/36/37: all 20 passed |
+| Android lint | Passed with zero errors; advisory warnings retained in validation/lint-results.txt |
+| Physical installation / live YouTube on Android 14–17 | Not executed in this cloud |
 
-The old download client had a fixed 70-second total call timeout, which is a concrete cause that could explain long transfers failing halfway. The user's exact failing network transaction was not reproduced. The new downloader removes that limit, enforces bounded read/connect timeouts, retries bounded ranges, checks byte positions/lengths, and resumes only a matching stream prefix. A phone check remains necessary to establish that this fixes the reported YouTube failure.
+The matrix tests interact with the actual activity's widgets and SQLite database. They verify immediate creation/persistence of a personal playlist, creating a playlist from selected downloaded songs without search, adding downloaded songs to an existing empty playlist, blank-name validation and keyboard Done, and the visible per-song add-to-playlist action. Existing history, download-range recovery, MP3 encoder, queue, and playlist-discovery tests also passed.
 
-The two-second generated stereo PCM fixture produced an MP3 with a decoded stream at 44100 Hz and 2 channels, approximately 2.037542 seconds including normal encoder padding. This validates the MP3 encoder, not Android's MediaCodec decoder on every supported phone.
+The minimum SDK change removes the earlier hard incompatibility with Android 14 and 15. A minimum SDK of 36 never prohibited Android 17 by itself. The reported Android 17 error, “Something went wrong. App not installed,” is generic. It has not been reproduced on that phone and its precise cause remains unknown. A successful framework run and cryptographic/package verification are not a device-install result. The new package is prepared for Android 14–17 and keeps the old signing key, but phone installation still needs confirmation; INSTALLATION.md gives a non-destructive diagnostic command.
 
-Google sign-in cannot import YouTube watch history through the official API. The default APK deliberately leaves sign-in disabled until OAuth setup is completed. It includes a functional local Takeout import flow. See GOOGLE_SIGN_IN_SETUP.md. No claim of direct account-history synchronization is made.
+Build toolchain: JDK 21, AGP 9.3.3, Gradle 9.5.0 with pinned distribution checksum, Android Platform 37.0, Build Tools 37.0.0, protobuf plugin 0.10.0, Robolectric 4.17. Test JVM export of `java.base/jdk.internal.access` is required by Robolectric's Android shared-memory bridge; this is not an app permission or a change to device security.
 
-All `*-framework.png` images are actual app views rendered through Robolectric native graphics with clearly labeled test data; they are not screenshots of a physical phone. Generated encoder/test audio is not a bundled music catalog.
+The deprecated onBackPressed override was removed. All supported versions use the existing platform OnBackInvokedDispatcher callback. No SQLite schema change or data reset is introduced. Existing playlists, downloads, and local history are retained by a same-key update.
 
-APK SHA-256: `34fcf06381bce07398ead0538cafcd298af529adb1ab14485273d9078d9ca8dc`
+Google sign-in still needs OAuth setup and cannot expose YouTube watch history. Takeout import remains local. The prior real-PCM MP3 fixture is independently decodable; Android MediaCodec conversion and live YouTube behavior still require phone checks. Framework screenshots contain explicit test fixtures, not real users' music.
+
+APK SHA-256: `d08cc3b7c4caf73ff81f30c6279c7c956cebbed3948fd18dcc027508e469bd4f`
 
 ## Phone acceptance
 
-1. Install as an update over Cadence; confirm existing playlists and offline files remain and launcher/info say Soundzy.
-2. Open the queue from the header/player; inspect artwork, current/upcoming sections, reorder/remove, shuffle, and clearing.
-3. Save a permitted song as Original audio, including a transfer longer than 70 seconds. Interrupt the connection and retry; confirm the prefix resumes when compatible.
-4. Save another song as MP3, or convert an offline copy from its menu. Verify progress, cancellation, and playback in airplane mode.
-5. Export an offline file through Android's picker and play it in another audio player.
-6. Import a small real Google Takeout JSON/HTML file, select songs, and verify the resulting playlist and recent order.
-7. Configure OAuth using the guide, rebuild/sign with the same key, and test the native Google account picker and sign-out separately.
+1. Download the complete new 0.4.0 APK and install it as an update over 0.3.0. Confirm retained data on Android 14/15/16/17 as applicable.
+2. Open Offline → Create playlist from downloads, name it, select songs, and save. Confirm the new playlist opens in Library and plays downloaded songs in airplane mode.
+3. Create an empty playlist in Library; use Add downloaded songs. Verify the **+** next to any song also opens playlist selection.
+4. Exercise Back navigation, search, streaming, and offline saves on each supported device.
+5. If installation on the affected Android 17 phone still fails, obtain the exact `adb install -r Soundzy-0.4.0.apk` package-manager error as described in INSTALLATION.md. No device policy or signing-conflict bypass is claimed.
