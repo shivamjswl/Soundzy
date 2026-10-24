@@ -2,7 +2,7 @@
 
 Developed by **Shivam Jaiswal**. Version **0.3.0**, for **Android 16 / API 36 and newer**.
 
-[Download APK](https://raw.githubusercontent.com/shivamjswl/ReverseEngineerAnything/soundzy-downloads/Soundzy-0.3.0.apk) · [Complete corresponding source archive](https://raw.githubusercontent.com/shivamjswl/ReverseEngineerAnything/soundzy-downloads/Soundzy-0.3.0-source.zip)
+[Download APK](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/Soundzy-0.3.0.apk) · [Complete corresponding source archive](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/Soundzy-0.3.0-source.zip)
 
 Soundzy is the renamed Cadence app. The application ID (`app.cadence`), database, and signing key stay the same so the update can retain existing playlists and downloads. The project directory remains `/workspace/Cadence`.
 
