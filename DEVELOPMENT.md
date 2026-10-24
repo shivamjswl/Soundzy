@@ -20,8 +20,8 @@ This machine has a read-only system home directory. Robolectric's test home and 
 ## Testing layers
 
 - JVM tests exercise input validation and atomic download publication.
-- Robolectric tests execute Android 16 framework code for real SQLite persistence and screen navigation. The UI test deliberately treats the playback service as unavailable because Robolectric does not host its MediaSession Binder. This does not verify audio playback.
-- Instrumentation tests in `app/src/androidTest` exercise a real Android device, including Media3 playback of a generated local test tone. Run them with `./gradlew :app:connectedDebugAndroidTest` on a usable Android 16+ device.
+- Robolectric tests execute Android framework code for real SQLite persistence and screen navigation. The UI test deliberately treats the playback service as unavailable because Robolectric does not host its MediaSession Binder. This does not verify audio playback.
+- Instrumentation tests in `app/src/androidTest` exercise a real Android device, including Media3 playback of a generated local test tone. Run them with `./gradlew :app:connectedDebugAndroidTest` on a usable Android 10+ device.
 - Live YouTube checks require real network access to YouTube and its returned media/image hosts. This cloud's proxy denied the YouTube requests. No live extraction or streaming success is claimed.
 
 The AOSP Android 16 emulator could not finish booting within the test window on this machine without hardware acceleration. Instrumentation tests were compiled but were not executed. Framework renders in `validation/*-framework.png` are actual app views drawn through Robolectric's native graphics mode, not screenshots from a phone.
@@ -39,3 +39,13 @@ The app's minimum SDK is 34; compile and target SDK are 37 (Android 17). Use And
 Robolectric 4.17 supplies API 34, 35, 36, and 37. AndroidCompatibilityTest executes the actual naming/selection widgets and SQLite persistence on each framework. The desktop test JVM exports only `java.base/jdk.internal.access` to enable Robolectric's Android 16/17 shared-memory file-descriptor bridge; this flag is not an Android app permission or a runtime security change.
 
 A framework test is not a device install. The generic Android 17 install failure still needs package-manager output or a physical-device retry to diagnose. APK signatures and declared SDK range are verified separately. Keep the existing signing key; changing it breaks in-place updates and is unrelated to the visible app rename.
+
+## Android 10–17 compatibility build (0.5.0)
+
+Minimum SDK is now 29; compile/target remain 37. Build the delivered APK with `./gradlew :app:assembleRelease`. Release builds disable debugging and use the original locally retained development signing key for update continuity. Never commit the keystore; building with a newly generated key will not update an installation signed with the original.
+
+MainActivity uses AndroidX ComponentActivity with OnBackPressedDispatcher, ViewCompat/WindowInsetsCompat, and ContextCompat's non-exported receiver registration. Notifications are requested only on API 33+. Audio export and the device test fixture copy streams without InputStream.transferTo. YouTube link parsing uses the older URLDecoder charset-name overload. Core library desugaring (`desugar_jdk_libs` 2.1.5) supplies Java library APIs on older Android runtimes. This goes beyond lowering the manifest minimum.
+
+AndroidCompatibilityTest now covers API 29/30/31/32/33/34/35/36/37. On API 29–32 Robolectric must explicitly grant the app's own declared signature permission `app.cadence.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`, which Android normally grants at installation. This simulates installation state; the production receiver remains protected against external broadcasts. Test the default build with `./gradlew :app:testDebugUnitTest :app:lintDebug :app:lintRelease :app:assembleDebugAndroidTest`.
+
+The user's Android 17 build is CP3A.260905.009. No direct access to that Pixel is available here, and its install failure remains unresolved until package-manager output or a successful phone retry is supplied. See INSTALLATION.md.

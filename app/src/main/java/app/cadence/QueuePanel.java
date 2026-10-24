@@ -8,6 +8,9 @@ import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
 import androidx.media3.common.*;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import java.util.*;
 
 /** A live queue view keyed by timeline UIDs, so edits cannot target stale positions. */
@@ -32,8 +35,8 @@ public final class QueuePanel {
     public static int indexOf(Player player,Object uid){Timeline t=player.getCurrentTimeline();Timeline.Window w=new Timeline.Window();for(int i=0;i<t.getWindowCount();i++)if(Objects.equals(uid,t.getWindow(i,w).uid))return i;return C.INDEX_UNSET;}
     public void show(){
         dialog=new Dialog(activity);root=column();root.setPadding(dp(20),dp(14),dp(20),dp(12));root.setBackground(round(BG,26));dialog.setContentView(root);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setGravity(Gravity.BOTTOM);
-        root.setOnApplyWindowInsetsListener((v,insets)->{android.graphics.Insets nav=insets.getInsets(WindowInsets.Type.systemBars());v.setPadding(dp(20),dp(14),dp(20),dp(12)+nav.bottom);return insets;});
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);WindowCompat.setDecorFitsSystemWindows(dialog.getWindow(),false);dialog.getWindow().setGravity(Gravity.BOTTOM);
+        ViewCompat.setOnApplyWindowInsetsListener(root,(v,insets)->{androidx.core.graphics.Insets nav=insets.getInsets(WindowInsetsCompat.Type.systemBars());v.setPadding(dp(20),dp(14),dp(20),dp(12)+nav.bottom);return insets;});
         dialog.setOnDismissListener(d->player.removeListener(listener));player.addListener(listener);render();dialog.show();
         dialog.getWindow().setLayout(-1,(int)(activity.getResources().getDisplayMetrics().heightPixels*.86));root.requestApplyInsets();
     }

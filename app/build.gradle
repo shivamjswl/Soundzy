@@ -8,21 +8,22 @@ android {
     buildToolsVersion "37.0.0"
     defaultConfig {
         applicationId 'app.cadence'
-        minSdk 34
+        minSdk 29
         targetSdk 37
-        versionCode 4
-        versionName '0.4.0'
+        versionCode 5
+        versionName '0.5.0'
         resValue 'string', 'app_version', versionName
         resValue 'string', 'google_web_client_id', googleClient
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     sourceSets.main.java.srcDir(googleEnabled ? 'src/google/java' : 'src/noGoogle/java')
     compileOptions {
+        coreLibraryDesugaringEnabled = true
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
     signingConfigs { debug { enableV2Signing = true; enableV3Signing = true } }
-    buildTypes { release { minifyEnabled false } }
+    buildTypes { release { minifyEnabled false; signingConfig signingConfigs.debug } }
     testOptions {
         unitTests.includeAndroidResources = true
         unitTests.all {
@@ -43,6 +44,9 @@ android {
     lint { abortOnError true }
 }
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    implementation 'androidx.activity:activity:1.10.1'
+    implementation 'androidx.core:core:1.15.0'
     implementation project(':extractor')
     if (googleEnabled) {
         implementation 'androidx.credentials:credentials:1.5.0'

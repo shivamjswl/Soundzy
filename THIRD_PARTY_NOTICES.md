@@ -26,3 +26,8 @@ Upstream extractor and nanojson source headers are retained. The complete-source
 - **jump3r 1.0.5** (Java LAME port), LGPL-2.1-or-later. Source: https://github.com/Sciss/Jump3r and the Maven Central `de.sciss:jump3r:1.0.5:sources` artifact. Exact corresponding source is included as `third_party/jump3r-1.0.5-sources.jar`; LGPL text is in `licenses/LGPL-2.1.txt`. Soundzy uses its MP3 core through an original adapter and does not modify the library. LAME and jump3r's upstream copyright/license headers are retained in the source archive.
 - The default distributed Soundzy APK does **not** bundle the optional Google sign-in SDKs. A configured Google-enabled build adds AndroidX Credentials 1.5.0 (Apache-2.0), its Google Play services adapter 1.5.0 (Apache-2.0), Google ID 1.1.1 and transitive Google Play services libraries (Android Software Development Kit License). Google's SDK terms: https://developer.android.com/studio/terms.html . Review the configured build's licensing compatibility before redistributing it; these components are not relicensed by Soundzy's GPL notice.
 - MockWebServer 4.12.0, JUnit, Robolectric, and generated test audio are test-only; MockWebServer is Apache-2.0 and is not a runtime download server.
+
+## Soundzy 0.5.0 additions
+
+- AndroidX Activity 1.10.1 and Core 1.15.0, Apache-2.0, https://android.googlesource.com/platform/frameworks/support . Their upstream resource notices are retained in the package.
+- desugar_jdk_libs 2.1.5, GPL-2.0 with the Classpath Exception, https://github.com/google/desugar_jdk_libs . Its corresponding source archive and upstream license text are supplied in `third_party/` and `licenses/` respectively. It provides Java library backports for older Android releases; upstream notices remain applicable.

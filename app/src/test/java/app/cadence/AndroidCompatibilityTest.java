@@ -13,7 +13,7 @@ import java.io.*;
 import java.util.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk={34,35,36,37},application=CadenceApp.class,qualifiers="w411dp-h914dp-420dpi")
+@Config(sdk={29,30,31,32,33,34,35,36,37},application=CadenceApp.class,qualifiers="w411dp-h914dp-420dpi")
 @LooperMode(LooperMode.Mode.PAUSED)
 public final class AndroidCompatibilityTest {
     private CadenceApp app;
@@ -21,6 +21,8 @@ public final class AndroidCompatibilityTest {
     @Before public void setup(){
         app=(CadenceApp)RuntimeEnvironment.getApplication();
         app.playlists=new PlaylistSource(){public List<Suggestion> suggest(String query){return List.of();}public Tracks playlist(String url,org.schabi.newpipe.extractor.Page page){return new Tracks("",List.of(),null);}};
+        // Android grants the app its declared signature permission at install; simulate that grant in Robolectric.
+        Shadows.shadowOf(app).grantPermissions(app.getPackageName()+".DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");
         Shadows.shadowOf(app).declareComponentUnbindable(new ComponentName(app,PlaybackService.class));
     }
     @After public void cleanup(){app.library.close();}

@@ -17,11 +17,11 @@ public final class PlaylistLinks {
             for(String field:uri.getRawQuery().split("&")){
                 String[] pair=field.split("=",2);
                 if(pair.length==2&&pair[0].equals("list")){
-                    String id=URLDecoder.decode(pair[1],StandardCharsets.UTF_8);
+                    String id=URLDecoder.decode(pair[1],StandardCharsets.UTF_8.name());
                     return id.matches("[A-Za-z0-9_-]{2,160}")?"https://www.youtube.com/playlist?list="+id:null;
                 }
             }
-        }catch(RuntimeException ignored){/* Not a supported playlist link. */}
+        }catch(java.io.UnsupportedEncodingException | RuntimeException ignored){/* Not a supported playlist link. */}
         return null;
     }
 }

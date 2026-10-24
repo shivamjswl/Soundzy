@@ -1,11 +1,116 @@
 {
   "framework_api_levels": [
+    29,
+    30,
+    31,
+    32,
+    33,
     34,
     35,
     36,
     37
   ],
   "cases": [
+    {
+      "test": "createsCustomPlaylistFromDownloadsWithoutSearching[29]",
+      "passed": true
+    },
+    {
+      "test": "blankNameKeepsDialogOpenAndKeyboardDoneSaves[29]",
+      "passed": true
+    },
+    {
+      "test": "downloadedSongsExposeAddToPlaylistWithoutOpeningAMenu[29]",
+      "passed": true
+    },
+    {
+      "test": "createsOwnPlaylistImmediatelyAndPersistsIt[29]",
+      "passed": true
+    },
+    {
+      "test": "addsDownloadsToAnExistingEmptyPlaylist[29]",
+      "passed": true
+    },
+    {
+      "test": "createsCustomPlaylistFromDownloadsWithoutSearching[30]",
+      "passed": true
+    },
+    {
+      "test": "blankNameKeepsDialogOpenAndKeyboardDoneSaves[30]",
+      "passed": true
+    },
+    {
+      "test": "downloadedSongsExposeAddToPlaylistWithoutOpeningAMenu[30]",
+      "passed": true
+    },
+    {
+      "test": "createsOwnPlaylistImmediatelyAndPersistsIt[30]",
+      "passed": true
+    },
+    {
+      "test": "addsDownloadsToAnExistingEmptyPlaylist[30]",
+      "passed": true
+    },
+    {
+      "test": "createsCustomPlaylistFromDownloadsWithoutSearching[31]",
+      "passed": true
+    },
+    {
+      "test": "blankNameKeepsDialogOpenAndKeyboardDoneSaves[31]",
+      "passed": true
+    },
+    {
+      "test": "downloadedSongsExposeAddToPlaylistWithoutOpeningAMenu[31]",
+      "passed": true
+    },
+    {
+      "test": "createsOwnPlaylistImmediatelyAndPersistsIt[31]",
+      "passed": true
+    },
+    {
+      "test": "addsDownloadsToAnExistingEmptyPlaylist[31]",
+      "passed": true
+    },
+    {
+      "test": "createsCustomPlaylistFromDownloadsWithoutSearching[32]",
+      "passed": true
+    },
+    {
+      "test": "blankNameKeepsDialogOpenAndKeyboardDoneSaves[32]",
+      "passed": true
+    },
+    {
+      "test": "downloadedSongsExposeAddToPlaylistWithoutOpeningAMenu[32]",
+      "passed": true
+    },
+    {
+      "test": "createsOwnPlaylistImmediatelyAndPersistsIt[32]",
+      "passed": true
+    },
+    {
+      "test": "addsDownloadsToAnExistingEmptyPlaylist[32]",
+      "passed": true
+    },
+    {
+      "test": "createsCustomPlaylistFromDownloadsWithoutSearching[33]",
+      "passed": true
+    },
+    {
+      "test": "blankNameKeepsDialogOpenAndKeyboardDoneSaves[33]",
+      "passed": true
+    },
+    {
+      "test": "downloadedSongsExposeAddToPlaylistWithoutOpeningAMenu[33]",
+      "passed": true
+    },
+    {
+      "test": "createsOwnPlaylistImmediatelyAndPersistsIt[33]",
+      "passed": true
+    },
+    {
+      "test": "addsDownloadsToAnExistingEmptyPlaylist[33]",
+      "passed": true
+    },
     {
       "test": "createsCustomPlaylistFromDownloadsWithoutSearching[34]",
       "passed": true

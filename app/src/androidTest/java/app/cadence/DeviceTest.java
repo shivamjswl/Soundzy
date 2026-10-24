@@ -62,6 +62,6 @@ public final class DeviceTest {
     }
     private File fixture(String id)throws Exception{
         File dir=new File(app.getFilesDir(),"audio");assertTrue(dir.isDirectory()||dir.mkdirs());File f=new File(dir,id+".audio");
-        try(InputStream in=InstrumentationRegistry.getInstrumentation().getContext().getAssets().open("tone.wav");FileOutputStream out=new FileOutputStream(f)){in.transferTo(out);}return f;
+        try(InputStream in=InstrumentationRegistry.getInstrumentation().getContext().getAssets().open("tone.wav");FileOutputStream out=new FileOutputStream(f)){byte[] buffer=new byte[8192];int count;while((count=in.read(buffer))!=-1)out.write(buffer,0,count);}return f;
     }
 }

@@ -1,0 +1,4 @@
+package: name='app.cadence' versionCode='5' versionName='0.5.0' platformBuildVersionName='17' platformBuildVersionCode='37' compileSdkVersion='37' compileSdkVersionCodename='17'
+sdkVersion:'29'
+targetSdkVersion:'37'
+application: label='Soundzy' icon='res/r2.xml'

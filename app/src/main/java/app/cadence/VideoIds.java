@@ -27,11 +27,11 @@ public final class VideoIds {
                 else if (u.getPath().equals("/watch") && u.getRawQuery() != null) {
                     for (String p : u.getRawQuery().split("&")) {
                         String[] kv = p.split("=", 2);
-                        if (kv.length == 2 && kv[0].equals("v")) id = URLDecoder.decode(kv[1], StandardCharsets.UTF_8);
+                        if (kv.length == 2 && kv[0].equals("v")) id = URLDecoder.decode(kv[1], StandardCharsets.UTF_8.name());
                     }
                 }
             }
             return valid(id) ? id : null;
-        } catch (RuntimeException e) { return null; }
+        } catch (java.io.UnsupportedEncodingException | RuntimeException e) { return null; }
     }
 }

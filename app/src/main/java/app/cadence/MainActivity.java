@@ -12,13 +12,16 @@ import android.view.*;
 import android.view.inputmethod.*;
 import android.widget.*;
 import androidx.media3.common.*;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.media3.session.*;
 import androidx.media3.session.MediaController;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.*;
 import java.util.concurrent.*;
 
-public final class MainActivity extends Activity {
+public final class MainActivity extends androidx.activity.ComponentActivity {
     private static final int BG=0xff101310,SURFACE=0xff1c211b,RAISED=0xff272e25,FG=0xfff4f6ef,MUTED=0xffa5b09f,GREEN=0xffb8f36d,INK=0xff15200d;
     private CadenceApp app;
     private LinearLayout root,body,mini,nav;
@@ -70,13 +73,13 @@ public final class MainActivity extends Activity {
         super.onCreate(state);app=CadenceApp.of(this);
         if(state!=null){tab=state.getString("tab","home");query=state.getString("query","");playlistId=state.getString("playlist");playlistName=state.getString("playlistName","");pendingExport=state.getString("pendingExport");}
         if(getIntent().getBooleanExtra("offline",false))tab="offline";
-        getWindow().getDecorView().setSystemUiVisibility(0);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(),false);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         render();
         connection=new MediaController.Builder(this,new SessionToken(this,new ComponentName(this,PlaybackService.class))).buildAsync();
-        connection.addListener(()->{if(closing||isDestroyed())return;try{player=connection.get();player.addListener(listener);updateMini();}catch(Exception e){toast("Could not connect to the audio player. Restart Cadence to retry.");}},getMainExecutor());
-        getOnBackInvokedDispatcher().registerOnBackInvokedCallback(android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,this::goBack);
-        registerReceiver(downloadsChanged,new IntentFilter(OfflineService.CHANGED),Context.RECEIVER_NOT_EXPORTED);
+        connection.addListener(()->{if(closing||isDestroyed())return;try{player=connection.get();player.addListener(listener);updateMini();}catch(Exception e){toast("Could not connect to the audio player. Restart Soundzy to retry.");}},getMainExecutor());
+        getOnBackPressedDispatcher().addCallback(this,new androidx.activity.OnBackPressedCallback(true){@Override public void handleOnBackPressed(){goBack();}});
+        androidx.core.content.ContextCompat.registerReceiver(this,downloadsChanged,new IntentFilter(OfflineService.CHANGED),androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED);
         handler.post(ticker);
         handler.post(()->loadSuggestions(recommendationQuery()));
     }
@@ -109,7 +112,7 @@ public final class MainActivity extends Activity {
     private void navigate(String target){tab=target;playlistId=null;hideKeyboard();render();}
     private void render(){
         root=column();root.setBackgroundColor(BG);setContentView(root);
-        root.setOnApplyWindowInsetsListener((v,insets)->{android.graphics.Insets sys=insets.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.displayCutout()|WindowInsets.Type.ime());v.setPadding(sys.left,sys.top,sys.right,sys.bottom);return insets;});root.requestApplyInsets();
+        ViewCompat.setOnApplyWindowInsetsListener(root,(v,insets)->{androidx.core.graphics.Insets sys=insets.getInsets(WindowInsetsCompat.Type.systemBars()|WindowInsetsCompat.Type.displayCutout()|WindowInsetsCompat.Type.ime());v.setPadding(sys.left,sys.top,sys.right,sys.bottom);return insets;});root.requestApplyInsets();
         LinearLayout header=row();header.setPadding(dp(16),dp(6),dp(12),dp(4));
         Icons mark=icon("wave",GREEN,null);header.addView(mark);TextView brand=text("Soundzy",25,FG,true);brand.setLetterSpacing(-.04f);header.addView(brand,new LinearLayout.LayoutParams(0,-2,1));Icons queue=icon("queue",MUTED,this::showQueue);queue.setContentDescription("View playback queue");header.addView(queue);Icons info=icon("settings",MUTED,this::showAbout);info.setContentDescription("App info");header.addView(info);add(root,header,64);
         scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setClipToPadding(false);scroll.setVerticalScrollBarEnabled(false);
@@ -337,7 +340,7 @@ public final class MainActivity extends Activity {
     private void showNowPlaying(){
         if(player==null||player.getCurrentMediaItem()==null)return;if(nowDialog!=null&&nowDialog.isShowing())return;
         nowDialog=new Dialog(this);LinearLayout page=column();page.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{0xff30412b,0xff151c14,BG}));page.setPadding(dp(26),dp(18),dp(26),dp(24));
-        ScrollView container=new ScrollView(this);container.setFillViewport(true);container.addView(page);nowDialog.setContentView(container);nowDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);nowDialog.getWindow().setLayout(-1,-1);container.setOnApplyWindowInsetsListener((v,i)->{android.graphics.Insets s=i.getInsets(WindowInsets.Type.systemBars());v.setPadding(0,s.top,0,s.bottom);return i;});
+        ScrollView container=new ScrollView(this);container.setFillViewport(true);container.addView(page);nowDialog.setContentView(container);nowDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);WindowCompat.setDecorFitsSystemWindows(nowDialog.getWindow(),false);nowDialog.getWindow().setLayout(-1,-1);ViewCompat.setOnApplyWindowInsetsListener(container,(v,i)->{androidx.core.graphics.Insets s=i.getInsets(WindowInsetsCompat.Type.systemBars());v.setPadding(0,s.top,0,s.bottom);return i;});
         LinearLayout top=row();top.addView(icon("down",FG,()->nowDialog.dismiss()));TextView title=label("IN YOUR FREQUENCY",11,FG,true);title.setGravity(Gravity.CENTER);top.addView(title,new LinearLayout.LayoutParams(0,-2,1));top.addView(icon("queue",FG,this::showQueue));page.addView(top);space(page,28);
         int artSize=Math.min(360,(int)(getResources().getDisplayMetrics().widthPixels/getResources().getDisplayMetrics().density)-64);nowArtFrame=new FrameLayout(this);nowArtFrame.setBackground(bg(RAISED,24));nowArtFrame.setClipToOutline(true);nowArtFrame.addView(new RecordArt(this),new FrameLayout.LayoutParams(-1,-1));nowArt=new ImageView(this);nowArt.setScaleType(ImageView.ScaleType.CENTER_CROP);nowArtFrame.addView(nowArt,new FrameLayout.LayoutParams(-1,-1));LinearLayout.LayoutParams artParams=new LinearLayout.LayoutParams(dp(artSize),dp(artSize));artParams.gravity=Gravity.CENTER_HORIZONTAL;page.addView(nowArtFrame,artParams);space(page,30);
         LinearLayout name=row();LinearLayout names=column();nowTitle=label("",25,FG,true);nowArtist=label("",15,0xffc0cbb9,false);names.addView(nowTitle);space(names,6);names.addView(nowArtist);name.addView(names,new LinearLayout.LayoutParams(0,-2,1));likeIcon=icon("heart",GREEN,()->{Track t=Track.from(player.getCurrentMediaItem());boolean liked=app.library.contains("liked",t.id());if(liked)app.library.remove("liked",t.id());else app.library.add("liked",t);updateNow();});likeIcon.setContentDescription("Toggle liked song");name.addView(likeIcon);page.addView(name);space(page,18);
@@ -447,7 +450,7 @@ public final class MainActivity extends Activity {
         new AlertDialog.Builder(this).setTitle("Save offline").setView(choices).setPositiveButton("Save offline",(d,w)->startDownload(track,formats.getCheckedRadioButtonId()==mp3.getId())).setNegativeButton("Cancel",null).show();
     }
     private void startDownload(Track track,boolean mp3){
-        if(checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},7);
+        if(Build.VERSION.SDK_INT>=33&&checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},7);
         try{OfflineService.enqueue(this,track,mp3);toast(mp3?"Saving and converting to MP3 · Check Offline":"Download queued · Check Offline");}catch(RuntimeException e){toast("Couldn't start saving. Keep Soundzy open and retry.");}
     }
     private void exportAudio(Track track){
@@ -491,7 +494,7 @@ public final class MainActivity extends Activity {
             }catch(Exception e){runOnUiThread(()->{if(!closing)toast(e.getMessage()==null?"Couldn't read this history export.":e.getMessage());});}
         });}else if(request==EXPORT_AUDIO&&pendingExport!=null){String source=pendingExport;pendingExport=null;files.submit(()->{
             try(java.io.InputStream in=new java.io.FileInputStream(source);java.io.OutputStream out=getContentResolver().openOutputStream(uri,"wt")){
-                if(out==null)throw new java.io.IOException("Couldn't open the selected destination.");in.transferTo(out);runOnUiThread(()->{if(!closing)toast("Audio exported");});
+                if(out==null)throw new java.io.IOException("Couldn't open the selected destination.");byte[] buffer=new byte[65536];int count;while((count=in.read(buffer))!=-1)out.write(buffer,0,count);runOnUiThread(()->{if(!closing)toast("Audio exported");});
             }catch(Exception e){runOnUiThread(()->{if(!closing)toast("Export failed. Choose another destination and retry.");});}
         });}
     }
@@ -509,7 +512,7 @@ public final class MainActivity extends Activity {
         });dialog.show();
     }
     private void showAbout(){
-        new AlertDialog.Builder(this).setTitle("Soundzy · "+getString(R.string.app_version)).setMessage(getString(R.string.developed_by)+"\n\nYour music, in your frequency.\n\nAndroid 14+ · No account required\n\nSearch and stream YouTube audio and discover public playlists with the open-source NewPipe Extractor. For you suggestions use the most recently played artist when available; other filters use the selected mood. Optional Google sign-in saves only your name and email locally; it does not grant YouTube history access. Takeout exports are processed locally. Offline audio and optional MP3 conversion stay on this device. There are no in-app ads. YouTube availability and extraction can change; some videos may not play.\n\nPlaylists and downloads stay on this device. Uninstalling clears them. Audio files are kept in app-private storage. Search requests and playback connect directly to YouTube/Google; thumbnail requests connect to their image servers. No analytics or developer server.\n\nOnly download content you have permission to save. This app is not affiliated with YouTube or Spotify.\n\nOpen-source: GPL-3.0-or-later. NewPipe Extractor and nanojson: GPL-3.0-or-later and Apache-2.0 respectively; AndroidX Media3: Apache-2.0; OkHttp: Apache-2.0. Full notices are included with the source.").setNeutralButton("Account & history",(d,w)->navigate("account")).setPositiveButton("Got it",null).show();
+        new AlertDialog.Builder(this).setTitle("Soundzy · "+getString(R.string.app_version)).setMessage(getString(R.string.developed_by)+"\n\nYour music, in your frequency.\n\nAndroid 10+ · No account required\n\nSearch and stream YouTube audio and discover public playlists with the open-source NewPipe Extractor. For you suggestions use the most recently played artist when available; other filters use the selected mood. Optional Google sign-in saves only your name and email locally; it does not grant YouTube history access. Takeout exports are processed locally. Offline audio and optional MP3 conversion stay on this device. There are no in-app ads. YouTube availability and extraction can change; some videos may not play.\n\nPlaylists and downloads stay on this device. Uninstalling clears them. Audio files are kept in app-private storage. Search requests and playback connect directly to YouTube/Google; thumbnail requests connect to their image servers. No analytics or developer server.\n\nOnly download content you have permission to save. This app is not affiliated with YouTube or Spotify.\n\nOpen-source: GPL-3.0-or-later. NewPipe Extractor and nanojson: GPL-3.0-or-later and Apache-2.0 respectively; AndroidX Media3: Apache-2.0; OkHttp: Apache-2.0. Full notices are included with the source.").setNeutralButton("Account & history",(d,w)->navigate("account")).setPositiveButton("Got it",null).show();
     }
     private void hideKeyboard(){View focus=getCurrentFocus();if(focus!=null)getSystemService(InputMethodManager.class).hideSoftInputFromWindow(focus.getWindowToken(),0);}
     private void toast(String s){Toast.makeText(this,s,Toast.LENGTH_LONG).show();}

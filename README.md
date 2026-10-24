@@ -1,27 +1,25 @@
 # Soundzy
 
-Developed by **Shivam Jaiswal**. Version **0.4.0**, for **Android 14 / API 34 and newer**.
+Developed by **Shivam Jaiswal**. Version **0.5.0**, for **Android 10 / API 29 and newer**.
 
-[Download APK](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/Soundzy-0.4.0.apk) · [Complete corresponding source archive](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/Soundzy-0.4.0-source.zip)
+[Download APK](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/Soundzy-0.5.0.apk) · [Complete corresponding source archive](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/Soundzy-0.5.0-source.zip)
 
 Soundzy is the renamed Cadence app. The application ID (`app.cadence`), database, and signing key stay the same so the update can retain existing playlists and downloads. The project directory remains `/workspace/Cadence`.
 
-## New in 0.4.0
+## New in 0.5.0
 
-- Android 14 and 15 are now allowed by the APK's minimum SDK (34); the app is compiled/targeted against Android 17 (API 37). Android 14, 15, 16, and 17 receive dedicated framework tests for the custom-playlist flows.
-- In **Offline**, use **Create playlist from downloads**, enter a name, select songs, and save. The playlist opens immediately in Library.
-- In an existing playlist, use **Add downloaded songs** to fill it without searching online.
-- Every song row exposes a visible **+** action to add that song to a playlist, including creating a new one.
-- Playlist naming supports the keyboard Done action, keeps invalid blank names open for correction, and opens newly created playlists immediately.
-- The update keeps the same application ID, signing certificate, and SQLite schema. The APK carries a modern v3 signature, verified across API 34–37.
+- Minimum Android version is now **Android 10 (API 29)**; compile and target remain Android 17 (API 37).
+- Back navigation, system/keyboard insets, receiver registration, notification permissions, audio export, and Java library backports accommodate Android 10–12.
+- The downloadable APK now uses the **release build type**, with debugging disabled and the existing development signing key retained for updates.
+- Playlist creation remains available from **Offline → Create playlist from downloads** and **Library → Create playlist**. Use **Add downloaded songs** inside a playlist or the visible **+** beside a song.
 
-The previous playlist creation dialog passed a basic UI test; this change addresses the reported missing/discoverable action from downloaded songs. The generic Android 17 "Something went wrong. App not installed" message has not been reproduced on a physical phone. See [installation troubleshooting](INSTALLATION.md) if it persists.
+The cause of the reported installation failure on a Pixel running **Android 17 build CP3A.260905.009** remains unknown: the version screenshot does not reveal the package-manager error. This build changes packaging and older-version compatibility; neither establishes the cause of that phone's failure. See [installation troubleshooting](INSTALLATION.md) for the non-destructive diagnostic command.
 
 ## Install the update
 
-Open `Soundzy-0.4.0-debug.apk` on your phone and install it over the existing Cadence installation. Existing data is retained by an Android update with the same application ID/signing key. Uninstalling clears app-private data.
+Download `Soundzy-0.5.0.apk` above and open it on the phone to update the existing Cadence/Soundzy installation. The application ID and signing certificate match previous supplied builds. Existing data is retained by a compatible Android update; uninstalling clears app-private data.
 
-This is a development-signed test build, not a Play Store release. Live YouTube compatibility and device codec behavior still need phone testing.
+This is a non-debuggable APK signed with the existing development key, not a Play Store release. Actual installation on the affected Pixel, live YouTube behavior, and device codec behavior still need phone testing.
 
 ## Music and playlists
 
@@ -68,14 +66,14 @@ Prerequisites: a full JDK 21, Android SDK Platform 37.0 / Build Tools 37.0.0 wit
 ```bash
 ./scripts/fetch-deps.sh
 # Configure sdk.dir in an ignored local.properties or use Android Studio's SDK.
-./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+./gradlew :app:assembleRelease :app:testDebugUnitTest :app:lintDebug :app:lintRelease
 ```
 
-Windows users can fetch dependencies in Git Bash and use `gradlew.bat`. APK output: `app/build/outputs/apk/debug/app-debug.apk`. Cloud-specific paths are in [DEVELOPMENT.md](DEVELOPMENT.md).
+Windows users can fetch dependencies in Git Bash and use `gradlew.bat`. Release APK output: `app/build/outputs/apk/release/app-release.apk`. The configured release build uses the development keystore; preserve that original keystore securely when updating existing installations. A fresh checkout generates a different development key unless the original is supplied locally. Cloud-specific paths are in [DEVELOPMENT.md](DEVELOPMENT.md).
 
 NewPipe Extractor and nanojson are pinned source dependencies under `.deps/`. Their source is included in the complete-source archive. Jump3r's corresponding source archive is in `third_party/`. An ordinary checkout can reconstruct the extractor dependencies with the fetch script. The default build uses `app/src/noGoogle/java`; providing `-PgoogleWebClientId=...` selects `app/src/google/java` and its official Google dependencies.
 
-Run real-device instrumentation tests on an Android 14+ device:
+Run real-device instrumentation tests on an Android 10+ device:
 
 ```bash
 ./gradlew :app:connectedDebugAndroidTest

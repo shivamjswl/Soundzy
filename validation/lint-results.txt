@@ -1,7 +1,18 @@
-/workspace/Cadence/app/build.gradle:57: Warning: A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.5.1 [NewerVersionAvailable]
+/workspace/Cadence/app/build.gradle:48: Warning: A newer version of androidx.activity:activity than 1.10.1 is available: 1.13.0 [GradleDependency]
+    implementation 'androidx.activity:activity:1.10.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+/workspace/Cadence/app/build.gradle:61: Warning: A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.5.1 [NewerVersionAvailable]
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/Cadence/app/build.gradle:59: Warning: A newer version of com.squareup.okhttp3:mockwebserver than 4.12.0 is available: 5.5.1 [NewerVersionAvailable]
+/workspace/Cadence/app/build.gradle:63: Warning: A newer version of com.squareup.okhttp3:mockwebserver than 4.12.0 is available: 5.5.1 [NewerVersionAvailable]
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -12,6 +23,26 @@
    available in the Android SDK tools and libraries, but this works with any
    MavenCentral dependency, and connects to the library every time, which
    makes it more flexible but also much slower.
+
+/workspace/Cadence/app/src/main/AndroidManifest.xml:10: Warning: The attribute android:dataExtractionRules only applies for Android 12 and higher; since minSdkVersion is API 29 you should also set android:fullBackupContent [DataExtractionRules]
+        android:icon="@drawable/ic_launcher" android:allowBackup="false" android:dataExtractionRules="@xml/backup_rules" android:supportsRtl="true"
+                                                                                                      ~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "DataExtractionRules":
+   Before Android 12, the attributes android:allowBackup and
+   android:fullBackupContent were used to configure all forms of backup,
+   including cloud backups, device-to-device transfers and adb backup.
+
+   In Android 12 and higher, these attributes have been deprecated and will
+   only apply to cloud backups. You should instead use the attribute
+   android:dataExtractionRules, specifying an @xml resource that configures
+   which files to back up, for cloud backups and for device-to-device
+   transfers, separately. If your minSdkVersion supports older versions,
+   you'll still want to specify an android:fullBackupContent resource if the
+   default behavior is not right for your app.
+
+   https://developer.android.com/about/versions/12/backup-restore#xml-changes
+   https://goo.gle/DataExtractionRules
 
 /workspace/Cadence/app/src/main/java/app/cadence/OfflineService.java:52: Warning: Consider also using StorageManager#getAllocatableBytes and allocateBytes which will consider clearable cached data [UsableSpace]
                         checkCancelled(id);if(dir.getUsableSpace()<16*1024*1024L)throw new IOException("Device storage is full. Free space and tap Retry.");
@@ -37,10 +68,10 @@
    you are already using the new API, consider moving the calls to the same
    file or suppressing the warning.
 
-/workspace/Cadence/app/src/main/java/app/cadence/MainActivity.java:445: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/Cadence/app/src/main/java/app/cadence/MainActivity.java:448: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
         RadioGroup formats=new RadioGroup(this);RadioButton original=new RadioButton(this);original.setId(View.generateViewId());original.setText("Original audio · Faster, smaller");original.setTextColor(FG);formats.addView(original);
                                                                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/Cadence/app/src/main/java/app/cadence/MainActivity.java:446: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/Cadence/app/src/main/java/app/cadence/MainActivity.java:449: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
         RadioButton mp3=new RadioButton(this);mp3.setId(View.generateViewId());mp3.setText("MP3 · Convert on this device");mp3.setTextColor(FG);formats.addView(mp3);formats.check(original.getId());choices.addView(formats);space(choices,10);choices.addView(text("MP3 conversion takes extra time and storage. Interrupted transfers can continue when you retry.",12,MUTED,false));
                                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -57,4 +88,4 @@
 
    https://developer.android.com/guide/topics/resources/localization.html
 
-0 errors, 6 warnings
+0 errors, 8 warnings
