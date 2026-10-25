@@ -8,7 +8,7 @@ public final class RecordArt extends View {
     private final Paint p=new Paint(3);
     private RadialGradient glow;
     @Override protected void onSizeChanged(int w,int h,int oldw,int oldh){super.onSizeChanged(w,h,oldw,oldh);glow=new RadialGradient(w*.57f,h*.5f,Math.max(1,Math.min(w,h)*.66f),new int[]{0x555e9b30,0x00101310},null,Shader.TileMode.CLAMP);}
-    public RecordArt(Context c){super(c);setContentDescription("Soundzy vinyl record artwork");}
+    public RecordArt(Context c){super(c);setContentDescription("MuseDock vinyl record artwork");}
     @Override protected void onDraw(Canvas c){
         float w=getWidth(),h=getHeight(),r=Math.min(w,h)*.44f,x=w*.57f,y=h*.5f;
         p.setShader(glow);c.drawRect(0,0,w,h,p);p.setShader(null);

@@ -42,7 +42,7 @@ public final class OfflineService extends Service {
         String id=track.id();active=id;Library db=CadenceApp.of(this).library;
         File original=existing==null?null:new File(existing);PowerManager.WakeLock wake=null;
         try{
-            checkCancelled(id);wake=getSystemService(PowerManager.class).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"Soundzy:OfflineAudio");wake.acquire(60*60*1000L);
+            checkCancelled(id);wake=getSystemService(PowerManager.class).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"MuseDock:OfflineAudio");wake.acquire(60*60*1000L);
             File dir=new File(getFilesDir(),"audio");if(!dir.isDirectory()&&!dir.mkdirs())throw new IOException("Could not create offline storage.");
             if(original==null){
                 db.download(track,"downloading",null,"");changed();File source=new File(dir,id+".source");

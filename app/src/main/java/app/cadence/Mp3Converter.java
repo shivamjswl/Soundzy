@@ -48,7 +48,7 @@ public final class Mp3Converter {
             }
             if(encoder==null)throw new IOException("The decoder produced no audio samples.");encoder.finish();out.getFD().sync();converted=true;
         }catch(RuntimeException e){throw new IOException("MP3 conversion failed on this device. The original audio has been kept when available.",e);}
-        finally{if(encoder!=null)encoder.close();if(decoder!=null){try{decoder.stop();}catch(RuntimeException ignored){}decoder.release();}extractor.release();if(!converted&&temporary.exists()&&!temporary.delete())android.util.Log.w("Soundzy","Could not remove an interrupted MP3 conversion");}
+        finally{if(encoder!=null)encoder.close();if(decoder!=null){try{decoder.stop();}catch(RuntimeException ignored){}decoder.release();}extractor.release();if(!converted&&temporary.exists()&&!temporary.delete())android.util.Log.w("MuseDock","Could not remove an interrupted MP3 conversion");}
         try{Files.move(temporary.toPath(),destination.toPath(),StandardCopyOption.REPLACE_EXISTING,StandardCopyOption.ATOMIC_MOVE);}finally{Files.deleteIfExists(temporary.toPath());}
     }
 }

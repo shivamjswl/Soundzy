@@ -1,0 +1,70 @@
+{
+  "framework_api_levels": [
+    29,
+    37
+  ],
+  "cases": [
+    {
+      "test": "equalizerIsDiscoverableAndPresetControlsPersist[29]",
+      "passed": true
+    },
+    {
+      "test": "lateLyricsFromPreviousTrackCannotReplaceCurrentTrack[29]",
+      "passed": true
+    },
+    {
+      "test": "lyricsFollowSeekAndTrackChangesWithoutStaleText[29]",
+      "passed": true
+    },
+    {
+      "test": "lyricsFailureCanBeRetriedAndPlainTextIsLabeled[29]",
+      "passed": true
+    },
+    {
+      "test": "albumBrowsingPagesDeduplicatesOpensAndSavesTracks[29]",
+      "passed": true
+    },
+    {
+      "test": "songsDefaultAndVideoFallbackUseSeparateFilters[29]",
+      "passed": true
+    },
+    {
+      "test": "musicFiltersReachTheMusicExtractor[29]",
+      "passed": true
+    },
+    {
+      "test": "equalizerIsDiscoverableAndPresetControlsPersist",
+      "passed": true
+    },
+    {
+      "test": "lateLyricsFromPreviousTrackCannotReplaceCurrentTrack",
+      "passed": true
+    },
+    {
+      "test": "lyricsFollowSeekAndTrackChangesWithoutStaleText",
+      "passed": true
+    },
+    {
+      "test": "lyricsFailureCanBeRetriedAndPlainTextIsLabeled",
+      "passed": true
+    },
+    {
+      "test": "albumBrowsingPagesDeduplicatesOpensAndSavesTracks",
+      "passed": true
+    },
+    {
+      "test": "songsDefaultAndVideoFallbackUseSeparateFilters",
+      "passed": true
+    },
+    {
+      "test": "musicFiltersReachTheMusicExtractor",
+      "passed": true
+    },
+    {
+      "test": "newPanelsRenderWithOriginalTestLyrics",
+      "passed": true
+    }
+  ],
+  "native_audio_equalizer_hearing_test": "not executed",
+  "live_providers": "HTTP 403 in cloud; not verified on phone"
+}

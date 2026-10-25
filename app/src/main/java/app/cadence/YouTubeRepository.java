@@ -11,12 +11,11 @@ import org.schabi.newpipe.extractor.search.SearchInfo;
 import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.extractor.playlist.*;
 
-public final class YouTubeRepository implements PlaylistSource {
+public final class YouTubeRepository implements PlaylistSource, MusicCatalog {
     public static final String USER_AGENT="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
     public final OkHttpClient client=new OkHttpClient.Builder().connectTimeout(20,TimeUnit.SECONDS).readTimeout(40,TimeUnit.SECONDS).callTimeout(70,TimeUnit.SECONDS).build();
     private final Map<String,Cached> cache=new HashMap<>();
     private record Cached(AudioSource audio,long expires){}
-    public record SearchResult(List<Track> tracks, Page next, String query){}
     public YouTubeRepository(){
         NewPipe.init(new Downloader(){
             @Override public org.schabi.newpipe.extractor.downloader.Response execute(org.schabi.newpipe.extractor.downloader.Request request) throws IOException,ReCaptchaException {
@@ -32,22 +31,25 @@ public final class YouTubeRepository implements PlaylistSource {
             }
         });
     }
-    public synchronized SearchResult search(String query,Page next) throws Exception {
+    @Override public synchronized MusicCatalog.Result search(String query,Page next,MusicCatalog.Mode mode) throws Exception {
         String id=VideoIds.parse(query);
-        if(id!=null){StreamInfo i=StreamInfo.getInfo(ServiceList.YouTube,VideoIds.url(id));return new SearchResult(List.of(from(i)),null,query);}
-        var q=ServiceList.YouTube.getSearchQHFactory().fromQuery(query,List.of("videos"),"");
+        if(id!=null){StreamInfo i=StreamInfo.getInfo(ServiceList.YouTube,VideoIds.url(id));return new MusicCatalog.Result(List.of(from(i)),List.of(),null,query);}
+        var q=ServiceList.YouTube.getSearchQHFactory().fromQuery(query,List.of(mode.filter),"");
         List<InfoItem> items;Page more;
         if(next==null){SearchInfo info=SearchInfo.getInfo(ServiceList.YouTube,q);items=info.getRelatedItems();more=info.getNextPage();}
         else {var page=SearchInfo.getMoreItems(ServiceList.YouTube,q,next);items=page.getItems();more=page.getNextPage();}
-        List<Track> out=new ArrayList<>();
+        List<Track> out=new ArrayList<>();List<Suggestion> albums=new ArrayList<>();
         for(InfoItem item:items)if(item instanceof StreamInfoItem s && s.getStreamType()!=StreamType.LIVE_STREAM){
             String video=VideoIds.parse(s.getUrl());if(video==null)continue;
-            out.add(new Track(video,s.getName(),s.getUploaderName(),s.getThumbnails().isEmpty()?"":s.getThumbnails().get(0).getUrl(),s.getDuration()));
+            out.add(new Track(video,s.getName(),s.getUploaderName()==null?"Unknown artist":s.getUploaderName(),s.getThumbnails().isEmpty()?"":s.getThumbnails().get(0).getUrl(),s.getDuration()));
         }
-        return new SearchResult(out,Page.isValid(more)?more:null,query);
+        if(mode==MusicCatalog.Mode.ALBUMS)for(InfoItem item:items)if(item instanceof PlaylistInfoItem p){
+            String url=PlaylistLinks.canonical(p.getUrl());if(url!=null)albums.add(new Suggestion(url,p.getName(),p.getUploaderName()==null?"Unknown artist":p.getUploaderName(),p.getThumbnails().isEmpty()?"":p.getThumbnails().get(0).getUrl(),p.getStreamCount()));
+        }
+        return new MusicCatalog.Result(out,albums,Page.isValid(more)?more:null,query);
     }
     @Override public synchronized List<Suggestion> suggest(String query) throws Exception {
-        var search=ServiceList.YouTube.getSearchQHFactory().fromQuery(query,List.of("playlists"),"");
+        var search=ServiceList.YouTube.getSearchQHFactory().fromQuery(query,List.of("music_playlists"),"");
         SearchInfo info=SearchInfo.getInfo(ServiceList.YouTube,search);
         LinkedHashMap<String,Suggestion> found=new LinkedHashMap<>();
         for(InfoItem item:info.getRelatedItems())if(item instanceof PlaylistInfoItem p){
@@ -86,5 +88,5 @@ public final class YouTubeRepository implements PlaylistSource {
         }catch(IOException e){throw e;}catch(Exception e){throw new IOException("YouTube could not provide audio. The video may be restricted, or the extractor may need an update.",e);}
     }
     public synchronized void invalidate(String id){cache.remove(id);}
-    private Track from(StreamInfo s){return new Track(VideoIds.parse(s.getUrl()),s.getName(),s.getUploaderName(),s.getThumbnails().isEmpty()?"":s.getThumbnails().get(0).getUrl(),s.getDuration());}
+    private Track from(StreamInfo s){return new Track(VideoIds.parse(s.getUrl()),s.getName(),s.getUploaderName()==null?"Unknown artist":s.getUploaderName(),s.getThumbnails().isEmpty()?"":s.getThumbnails().get(0).getUrl(),s.getDuration());}
 }

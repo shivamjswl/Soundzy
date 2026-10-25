@@ -31,3 +31,7 @@ Upstream extractor and nanojson source headers are retained. The complete-source
 
 - AndroidX Activity 1.10.1 and Core 1.15.0, Apache-2.0, https://android.googlesource.com/platform/frameworks/support . Their upstream resource notices are retained in the package.
 - desugar_jdk_libs 2.1.5, GPL-2.0 with the Classpath Exception, https://github.com/google/desugar_jdk_libs . Its corresponding source archive and upstream license text are supplied in `third_party/` and `licenses/` respectively. It provides Java library backports for older Android releases; upstream notices remain applicable.
+
+## MuseDock 0.6.0 service integration
+
+Lyrics are retrieved on demand from LRCLIB's public API at https://lrclib.net (documentation: https://lrclib.net/docs). The lyrics surface provides visible provider attribution and a website link. No LRCLIB client library or lyric corpus is bundled. Returned text retains its respective authors' rights; MuseDock's application license does not relicense lyrics. Test lyric lines are original fixtures created for this project. YouTube Music catalog support uses the already-pinned NewPipe Extractor, without a new SDK or subscription integration.

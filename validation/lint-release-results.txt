@@ -24,7 +24,7 @@
    MavenCentral dependency, and connects to the library every time, which
    makes it more flexible but also much slower.
 
-/workspace/Cadence/app/src/main/AndroidManifest.xml:10: Warning: The attribute android:dataExtractionRules only applies for Android 12 and higher; since minSdkVersion is API 29 you should also set android:fullBackupContent [DataExtractionRules]
+/workspace/Cadence/app/src/main/AndroidManifest.xml:11: Warning: The attribute android:dataExtractionRules only applies for Android 12 and higher; since minSdkVersion is API 29 you should also set android:fullBackupContent [DataExtractionRules]
         android:icon="@drawable/ic_launcher" android:allowBackup="false" android:dataExtractionRules="@xml/backup_rules" android:supportsRtl="true"
                                                                                                       ~~~~~~~~~~~~~~~~~
 
@@ -68,10 +68,46 @@
    you are already using the new API, consider moving the calls to the same
    file or suppressing the warning.
 
-/workspace/Cadence/app/src/main/java/app/cadence/MainActivity.java:448: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/Cadence/app/src/main/java/app/cadence/EqualizerPanel.java:16: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        Switch enabled=new Switch(activity);enabled.setText("Equalizer enabled");enabled.setTextColor(0xfff4f6ef);enabled.setChecked(equalizer.enabled());enabled.setOnCheckedChangeListener((v,on)->{equalizer.setEnabled(on);updateStatus();});page.addView(enabled,new LinearLayout.LayoutParams(-1,dp(56)));
+                                                            ~~~~~~~~~~~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/EqualizerPanel.java:25: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        TextView note=text(12);note.setText("Applies to streaming and offline audio. Available bands and gain limits depend on your device. Settings are kept when you close the app.");page.addView(note);
+                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/EqualizerPanel.java:30: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+    private void updateStatus(){status.setText(equalizer.status());preset.setText("Curve: "+equalizer.preset());}
+                                                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/EqualizerPanel.java:30: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+    private void updateStatus(){status.setText(equalizer.status());preset.setText("Curve: "+equalizer.preset());}
+                                                                                  ~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/LyricsPanel.java:30: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        LinearLayout top=new LinearLayout(activity);top.setGravity(Gravity.CENTER_VERTICAL);Button close=new Button(activity);close.setText("Close");close.setContentDescription("Close lyrics");close.setOnClickListener(v->dismiss());top.addView(close);
+                                                                                                                                            ~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/LyricsPanel.java:33: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        scroll=new ScrollView(activity){@Override public boolean onInterceptTouchEvent(MotionEvent event){if(event.getAction()==MotionEvent.ACTION_DOWN){following=false;follow.setText("Follow song");}return super.onInterceptTouchEvent(event);}};scroll.setFillViewport(true);scroll.setSmoothScrollingEnabled(true);content=new LinearLayout(activity);content.setOrientation(LinearLayout.VERTICAL);content.setPadding(0,dp(28),0,dp(200));scroll.addView(content);page.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
+                                                                                                                                                                                        ~~~~~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/LyricsPanel.java:46: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+        key=nextKey;heading.setText(track.title());detail.setText(track.artist()+" · Finding lyrics…");lyrics=null;rows.clear();active=-2;content.removeAllViews();content.addView(text("Finding your words…",26,0xfff4f6ef));following=true;follow.setText("Following song");scroll.scrollTo(0,0);
+                                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/LyricsPanel.java:46: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        key=nextKey;heading.setText(track.title());detail.setText(track.artist()+" · Finding lyrics…");lyrics=null;rows.clear();active=-2;content.removeAllViews();content.addView(text("Finding your words…",26,0xfff4f6ef));following=true;follow.setText("Following song");scroll.scrollTo(0,0);
+                                                                                 ~~~~~~~~~~~~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/LyricsPanel.java:46: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        key=nextKey;heading.setText(track.title());detail.setText(track.artist()+" · Finding lyrics…");lyrics=null;rows.clear();active=-2;content.removeAllViews();content.addView(text("Finding your words…",26,0xfff4f6ef));following=true;follow.setText("Following song");scroll.scrollTo(0,0);
+                                                                                                                                                                                                                                                            ~~~~~~~~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/LyricsPanel.java:55: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+        content.removeAllViews();rows.clear();Track track=current();detail.setText((track==null?"":track.artist()+" · ")+(lyrics.instrumental()?"Instrumental":lyrics.lines().isEmpty()?"Plain lyrics · Timing unavailable":"Synced lyrics · Tap a line to seek"));
+                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/LyricsPanel.java:60: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            TextView view=text(line.text().isEmpty()?"♪":line.text(),28,0xff9cae92);view.setTypeface(null,Typeface.BOLD);view.setPadding(0,dp(10),0,dp(10));view.setContentDescription("Lyric at "+line.milliseconds()+" milliseconds: "+line.text());view.setOnClickListener(v->{Player p=player.get();Track now=current();if(now==null||!(now.id()+"\n"+now.title()+"\n"+now.artist()).equals(key)){updateTrack(false);return;}if(p!=null&&p.isCommandAvailable(Player.COMMAND_SEEK_IN_CURRENT_MEDIA_ITEM)){p.seekTo(line.milliseconds());following=true;follow.setText("Following song");active=-2;updatePosition();}});content.addView(view);rows.add(view);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ~~~~~~~~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/LyricsPanel.java:64: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+    private void retry(){Button button=new Button(activity);button.setText("Retry lyrics");button.setOnClickListener(v->updateTrack(true));content.addView(button);}
+                                                                           ~~~~~~~~~~~~~~
+/workspace/Cadence/app/src/main/java/app/cadence/MainActivity.java:469: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
         RadioGroup formats=new RadioGroup(this);RadioButton original=new RadioButton(this);original.setId(View.generateViewId());original.setText("Original audio · Faster, smaller");original.setTextColor(FG);formats.addView(original);
                                                                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/Cadence/app/src/main/java/app/cadence/MainActivity.java:449: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/Cadence/app/src/main/java/app/cadence/MainActivity.java:470: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
         RadioButton mp3=new RadioButton(this);mp3.setId(View.generateViewId());mp3.setText("MP3 · Convert on this device");mp3.setTextColor(FG);formats.addView(mp3);formats.check(original.getId());choices.addView(formats);space(choices,10);choices.addView(text("MP3 conversion takes extra time and storage. Interrupted transfers can continue when you retry.",12,MUTED,false));
                                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -88,4 +124,4 @@
 
    https://developer.android.com/guide/topics/resources/localization.html
 
-0 errors, 8 warnings
+0 errors, 20 warnings

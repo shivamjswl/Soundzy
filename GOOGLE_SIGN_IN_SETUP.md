@@ -1,14 +1,14 @@
-# Google sign-in setup for Soundzy
+# Google sign-in setup for MuseDock
 
-This is an external prerequisite, not a key bundled with the test app. The supplied Soundzy APK has no OAuth client configured, so its Google sign-in button is disabled. Music playback, offline saves, playlists, and local Takeout history import remain usable without login.
+This is an external prerequisite, not a key bundled with the test app. The supplied MuseDock APK has no OAuth client configured, so its Google sign-in button is disabled. Music playback, offline saves, playlists, and local Takeout history import remain usable without login.
 
 **Google sign-in cannot import YouTube watch history.** Google's official YouTube API does not expose it. The implemented sign-in obtains a Google profile only. There is no YouTube history scope, cookie scraping, password capture, or embedded Google login web page. Use a user-selected Google Takeout JSON/HTML file to import history.
 
 ## Create the registrations
 
 1. Open [Google Cloud Console](https://console.cloud.google.com/) and create or select your own project.
-2. In **Google Auth Platform**, configure Branding, Audience, and the OAuth consent screen. Use Soundzy as the application name and your own support email. If the project is in Testing, add the Google accounts that will test it to the test-user list.
-3. Create an OAuth client with application type **Android**. Use package name **`app.cadence`**. This package intentionally stays unchanged from the original Cadence build so the Soundzy update preserves existing data.
+2. In **Google Auth Platform**, configure Branding, Audience, and the OAuth consent screen. Use MuseDock as the application name and your own support email. If the project is in Testing, add the Google accounts that will test it to the test-user list.
+3. Create an OAuth client with application type **Android**. Use package name **`app.cadence`**. This package intentionally stays unchanged from the original Cadence build so the MuseDock update preserves existing data.
 4. Register the signing certificate's SHA-1 fingerprint. For the development APK supplied in this chat it is:
 
    ```text
@@ -37,7 +37,7 @@ For compile-only verification of the Google integration without inventing a clie
 
 That command tests compilation only; it does not enable login or substitute for real Google project registration.
 
-Install using the same signing key as the working installation. In Soundzy, open **Info → Account & history → Sign in with Google**. Google Play services and an account/provider capable of handling Google credentials must be available on the phone. Verify the account picker, successful profile display, cancellation, and sign-out on a real registered device.
+Install using the same signing key as the working installation. In MuseDock, open **Info → Account & history → Sign in with Google**. Google Play services and an account/provider capable of handling Google credentials must be available on the phone. Verify the account picker, successful profile display, cancellation, and sign-out on a real registered device.
 
 Only the returned display name and email are saved in the app's private preferences. The ID token is not stored or uploaded. The app has no backend account, cloud sync, or remote authorization based on that token. If a backend is added later, verify ID-token signatures, issuer, audience, expiry, and nonce on that server before trusting it for any privileged action.
 
@@ -46,8 +46,8 @@ Only the returned display name and email are saved in the app's private preferen
 1. Open **Library → Import YouTube history**, or **Info → Account & history**.
 2. Open [Google Takeout](https://takeout.google.com/). Select **YouTube and YouTube Music**, include **history**, and choose a JSON or HTML watch-history export.
 3. Download and unzip the export on the phone.
-4. Choose `watch-history.json` or `watch-history.html` in Soundzy.
-5. Select entries that are songs, then tap **Import selected**. Watch history may contain ordinary videos; Soundzy does not claim to classify every entry as music.
+4. Choose `watch-history.json` or `watch-history.html` in MuseDock.
+5. Select entries that are songs, then tap **Import selected**. Watch history may contain ordinary videos; MuseDock does not claim to classify every entry as music.
 
 The selected file is processed locally. JSON timestamps preserve listening order and duplicate videos are merged. HTML imports preserve available titles and channel names, but localized HTML timestamps are not interpreted. Imports are limited to 20 MB and the first 5,000 distinct valid video IDs; the selection screen reports the entry limit. Existing local track metadata and more recent local listening timestamps are retained. The import creates a local playlist of links and does not download audio automatically.
 

@@ -17,7 +17,7 @@ import java.io.*;
 @LooperMode(LooperMode.Mode.PAUSED)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public final class QueuePanelTest {
-    private final Track first=new Track("testtone001","Moonlit drive","Soundzy test artist","",190),second=new Track("testtone002","A little closer","Soundzy test artist","",220),third=new Track("testtone003","Golden hour","Soundzy test artist","",180);
+    private final Track first=new Track("testtone001","Moonlit drive","MuseDock test artist","",190),second=new Track("testtone002","A little closer","MuseDock test artist","",220),third=new Track("testtone003","Golden hour","MuseDock test artist","",180);
     private ExoPlayer player;
     @Before public void setup(){player=new ExoPlayer.Builder(RuntimeEnvironment.getApplication()).build();player.setMediaItems(List.of(first.mediaItem(null),second.mediaItem(null),third.mediaItem(null)));}
     @After public void release(){player.release();}

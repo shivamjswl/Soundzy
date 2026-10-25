@@ -28,6 +28,7 @@ public final class PlaybackService extends MediaSessionService {
         player.setHandleAudioBecomingNoisy(true);
         player.setWakeMode(C.WAKE_MODE_LOCAL);
         player.addListener(new Player.Listener(){
+            @Override public void onAudioSessionIdChanged(int id){app.equalizer.attach(id);}
             @Override public void onMediaItemTransition(MediaItem item,int reason){
                 if(item!=null){Track t=app.library.track(item.mediaId);if(t!=null)app.library.played(t);}
             }
@@ -47,5 +48,5 @@ public final class PlaybackService extends MediaSessionService {
     @Override public void onTaskRemoved(android.content.Intent intent){
         if(!player.getPlayWhenReady()||player.getMediaItemCount()==0)stopSelf();
     }
-    @Override public void onDestroy(){if(session!=null)session.release();if(player!=null)player.release();super.onDestroy();}
+    @Override public void onDestroy(){if(session!=null)session.release();if(player!=null)player.release();CadenceApp.of(this).equalizer.release();super.onDestroy();}
 }

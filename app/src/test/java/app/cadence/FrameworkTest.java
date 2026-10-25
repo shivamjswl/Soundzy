@@ -106,8 +106,8 @@ public final class FrameworkTest {
     @Test public void soundzyAccountExplainsHistoryAndUnconfiguredLogin(){
         Shadows.shadowOf(app).declareComponentUnbindable(new android.content.ComponentName(app,PlaybackService.class));
         try(var controller=Robolectric.buildActivity(MainActivity.class).setup()){
-            View root=controller.get().getWindow().getDecorView();assertNotNull(find(root,"Soundzy"));click(root,"Library");click(root,"Import YouTube history");
-            assertNotNull(find(root,"Your Soundzy."));assertNotNull(find(root,"2. Choose history file"));assertFalse(find(root,"Sign in with Google").isEnabled());capture(root,"account-framework.png");
+            View root=controller.get().getWindow().getDecorView();assertNotNull(find(root,"MuseDock"));click(root,"Library");click(root,"Import YouTube history");
+            assertNotNull(find(root,"Your MuseDock."));assertNotNull(find(root,"2. Choose history file"));assertFalse(find(root,"Sign in with Google").isEnabled());capture(root,"account-framework.png");
         }
     }
     @Test public void userCanCreatePlaylistFromLibrary(){

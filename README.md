@@ -1,23 +1,26 @@
-# Soundzy
+# MuseDock
 
-Developed by **Shivam Jaiswal**. Version **0.5.0**, for **Android 10 / API 29 and newer**.
+Developed by **Shivam Jaiswal**. Version **0.6.0**, for **Android 10 / API 29 and newer**.
 
-[Download APK](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/Soundzy-0.5.0.apk) · [Complete corresponding source archive](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/Soundzy-0.5.0-source.zip)
+[Download APK](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/MuseDock-0.6.0.apk) · [Complete corresponding source archive](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/MuseDock-0.6.0-source.zip)
 
-Soundzy is the renamed Cadence app. The application ID (`app.cadence`), database, and signing key stay the same so the update can retain existing playlists and downloads. The project directory remains `/workspace/Cadence`.
+MuseDock is the renamed Soundzy/Cadence app. The application ID (`app.cadence`), database, and signing key stay the same so the update can retain existing playlists and downloads. The project directory remains `/workspace/Cadence`.
 
-## New in 0.5.0
+## New in 0.6.0
 
-- Minimum Android version is now **Android 10 (API 29)**; compile and target remain Android 17 (API 37).
-- Back navigation, system/keyboard insets, receiver registration, notification permissions, audio export, and Java library backports accommodate Android 10–12.
-- The downloadable APK now uses the **release build type**, with debugging disabled and the existing development signing key retained for updates.
-- Playlist creation remains available from **Offline → Create playlist from downloads** and **Library → Create playlist**. Use **Add downloaded songs** inside a playlist or the visible **+** beside a song.
+- **MuseDock** branding replaces Soundzy. The package, account preference storage, database and signing key stay the same for updates; the GitHub repository remains `shivamjswl/Soundzy`.
+- Search defaults to **YouTube Music → Songs**. Switch to **Albums** for album/single/EP results with artwork and artists, then open, play, page through, and save their ordered tracks. **YouTube videos** remains available as a separate filter. The Listen screen also offers **Browse albums**, and suggested playlists now use YouTube Music's playlist catalog.
+- **Now playing → Equalizer**, or **Info → Equalizer**, opens five frequency controls and Flat, Bass boost, Vocal and Treble boost presets. Settings and the on/off toggle persist. The player owns the effect on its own audio session and reattaches it when the session changes; unsupported outputs show a status instead of breaking playback. The requested curve is mapped to available device bands and clamped to device gain limits.
+- **Now playing → Lyrics** opens a large lyric view with active-line highlighting, automatic scrolling, free scrolling, follow-song control and tap-to-seek. Tracks without timestamps show clearly labeled plain lyrics. Missing and instrumental tracks have their own states, and provider errors offer Retry.
+- Lyrics are matched by title, artist and duration through LRCLIB's exact metadata API; no arbitrary search result is substituted. Loaded lyrics are cached privately for offline viewing (100 entries / 20 MB maximum). Closing the view cancels its worker and timers; stale responses cannot replace the current track's lyrics.
 
-The cause of the reported installation failure on a Pixel running **Android 17 build CP3A.260905.009** remains unknown: the version screenshot does not reveal the package-manager error. This build changes packaging and older-version compatibility; neither establishes the cause of that phone's failure. See [installation troubleshooting](INSTALLATION.md) for the non-destructive diagnostic command.
+Songs, albums and playlists use NewPipe's actual YouTube Music catalog filters. YouTube Music and YouTube share video IDs and media delivery, so playback still resolves YouTube media streams through NewPipe. This is an unofficial integration; it does not use a Premium account, guarantee original masters, lossless audio, or unrestricted catalog availability. Album search can also return singles and EPs. Spotify/Apple Music subscription playback would require their supported SDKs, account authorization and service terms; neither service is silently used here.
+
+Android 10+ remains the minimum, with compile/target API 37. The previously reported Pixel Android 17 installation failure (CP3A.260905.009) still has no package-manager diagnostic; a successful framework check does not prove installation on that phone. See [installation diagnostics](INSTALLATION.md).
 
 ## Install the update
 
-Download `Soundzy-0.5.0.apk` above and open it on the phone to update the existing Cadence/Soundzy installation. The application ID and signing certificate match previous supplied builds. Existing data is retained by a compatible Android update; uninstalling clears app-private data.
+Download `MuseDock-0.6.0.apk` above and open it on the phone to update the existing Cadence/Soundzy/MuseDock installation. The application ID and signing certificate match previous supplied builds. Existing data is retained by a compatible Android update; uninstalling clears app-private data.
 
 This is a non-debuggable APK signed with the existing development key, not a Play Store release. Actual installation on the affected Pixel, live YouTube behavior, and device codec behavior still need phone testing.
 
@@ -39,7 +42,7 @@ Open a song's menu and choose **Save offline**. Pick:
 - **Original audio**: preserves the original compressed audio and saves faster.
 - **MP3**: downloads the original first, then converts locally using Android's decoder and a Java LAME encoder. MP3 is a compatibility option; transcoding does not improve quality and takes extra CPU, battery, and storage.
 
-The previous shared client imposed a 70-second total call timeout. Long downloads could fail even while bytes were arriving. Soundzy now uses a dedicated client with no fixed total download deadline, bounded read/connect timeouts, 2 MiB range requests, automatic retries, checked response offsets/lengths, and fresh-link recovery. Partial bytes and a stream-identity checkpoint survive a failed attempt and process restart; tap Retry to continue when the source identity matches. Incompatible prefixes are discarded rather than combined with different audio.
+The previous shared client imposed a 70-second total call timeout. Long downloads could fail even while bytes were arriving. MuseDock now uses a dedicated client with no fixed total download deadline, bounded read/connect timeouts, 2 MiB range requests, automatic retries, checked response offsets/lengths, and fresh-link recovery. Partial bytes and a stream-identity checkpoint survive a failed attempt and process restart; tap Retry to continue when the source identity matches. Incompatible prefixes are discarded rather than combined with different audio.
 
 Only a complete transfer is published. The saved file must contain an Android-recognized audio track. MP3 conversion starts after the original audio is complete. If conversion fails, the original audio is kept when available. Conversion can be cancelled; retries and storage cleanup are available in Offline. Download/convert jobs run one at a time in a foreground service with progress and cancellation notifications.
 
@@ -55,7 +58,7 @@ History import is available now without login:
 
 1. Open **Library → Import YouTube history** or **Info → Account & history**.
 2. Export YouTube watch history from Google Takeout as JSON or HTML and unzip it.
-3. Choose the history file in Soundzy, select entries that are songs, and import them.
+3. Choose the history file in MuseDock, select entries that are songs, and import them.
 
 The file is processed locally, not uploaded. Watch history can include non-music videos, so selection is explicit. Valid video IDs are deduplicated; JSON timestamps retain listening order, while existing local metadata and newer play times are kept. Up to 5,000 distinct entries and 20 MB per file are supported. The import saves song links in a local playlist, not offline audio. HTML timestamps are not parsed.
 
@@ -71,7 +74,7 @@ Prerequisites: a full JDK 21, Android SDK Platform 37.0 / Build Tools 37.0.0 wit
 
 Windows users can fetch dependencies in Git Bash and use `gradlew.bat`. Release APK output: `app/build/outputs/apk/release/app-release.apk`. The configured release build uses the development keystore; preserve that original keystore securely when updating existing installations. A fresh checkout generates a different development key unless the original is supplied locally. Cloud-specific paths are in [DEVELOPMENT.md](DEVELOPMENT.md).
 
-NewPipe Extractor and nanojson are pinned source dependencies under `.deps/`. Their source is included in the complete-source archive. Jump3r's corresponding source archive is in `third_party/`. An ordinary checkout can reconstruct the extractor dependencies with the fetch script. The default build uses `app/src/noGoogle/java`; providing `-PgoogleWebClientId=...` selects `app/src/google/java` and its official Google dependencies.
+NewPipe Extractor and nanojson are pinned source dependencies under `.deps/`. Their source is included in the complete-source archive. Jump3r and desugar_jdk_libs corresponding source archives is in `third_party/`. An ordinary checkout can reconstruct the extractor dependencies with the fetch script. The default build uses `app/src/noGoogle/java`; providing `-PgoogleWebClientId=...` selects `app/src/google/java` and its official Google dependencies.
 
 Run real-device instrumentation tests on an Android 10+ device:
 
@@ -83,6 +86,6 @@ See [VALIDATION.md](VALIDATION.md) for executed checks, remaining phone checks, 
 
 ## Privacy and licenses
 
-YouTube searches, playback, and artwork requests go directly to YouTube/Google image/media hosts. Selected history exports and audio conversion stay on the device. Exporting writes to the destination/provider you choose in Android's file picker. Optional Google sign-in uses Google's native identity flow and stores only display name/email locally; no ID token is persisted or uploaded. No analytics or developer-hosted server is used.
+Music searches use YouTube Music or the selected YouTube video filter; playback and artwork requests go to YouTube/Google media and image hosts. Opening Lyrics sends song title, artist and duration to `lrclib.net` for matching. Returned lyrics are cached locally for offline use; no account, history export, audio file or Google profile is sent to LRCLIB. Lyrics coverage, matching and timing can vary. The lyrics view credits LRCLIB and links to its website. Selected history exports and audio conversion stay on the device. Exporting writes to the destination/provider you choose in Android's file picker. Optional Google sign-in uses Google's native identity flow and stores only display name/email locally; no ID token is persisted or uploaded. No analytics or developer-hosted server is used.
 
-Application code: GPL-3.0-or-later. Third-party material retains its own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), `licenses/`, and included source headers. The optional Google-enabled build is subject to Google's SDK terms and must be reviewed for license compatibility before redistribution. Soundzy is not affiliated with YouTube, Spotify, or Google.
+Application code: GPL-3.0-or-later. Third-party material retains its own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), `licenses/`, and included source headers. The optional Google-enabled build is subject to Google's SDK terms and must be reviewed for license compatibility before redistribution. MuseDock is not affiliated with YouTube, Spotify, or Google.
