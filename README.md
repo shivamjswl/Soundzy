@@ -1,25 +1,23 @@
 # MuseDock downloads
 
-Developed by Shivam Jaiswal. Version **0.6.0**, for **Android 10 (API 29) and newer**, targeting Android 17 (API 37).
+Developed by Shivam Jaiswal. Version **0.7.0**, for **Android 10 (API 29) and newer**, targeting Android 17 (API 37).
 
-**[Download MuseDock 0.6.0 APK](https://raw.githubusercontent.com/shivamjswl/Soundzy/downloads/MuseDock-0.6.0.apk)**
+**[Download MuseDock 0.7.0 APK](https://raw.githubusercontent.com/shivamjswl/Soundzy/downloads/MuseDock-0.7.0.apk)**
 
-[Complete corresponding source](https://raw.githubusercontent.com/shivamjswl/Soundzy/downloads/MuseDock-0.6.0-source.zip) · [APK SHA-256](https://raw.githubusercontent.com/shivamjswl/Soundzy/downloads/MuseDock-0.6.0.apk.sha256)
+[Complete source archive](https://raw.githubusercontent.com/shivamjswl/Soundzy/downloads/MuseDock-0.7.0-source.zip) · [APK SHA-256](https://raw.githubusercontent.com/shivamjswl/Soundzy/downloads/MuseDock-0.7.0.apk.sha256)
 
-MuseDock replaces the Soundzy name in the app. This repository remains named Soundzy. The standalone, non-debuggable APK retains `app.cadence`, the signing key, database and account preference storage, so it can update compatible existing Cadence/Soundzy installations and preserve local data. It uses the existing development signing key and is not a Play Store release.
+## New in 0.7.0
 
-## New in 0.6.0
+- Compact Library typography, smaller artwork/rows, clean navigation arrows and a subdued history-import link.
+- Lyrics and its provider integration removed. Equalizer is a small **⋯ → Equalizer** menu item in the app header and current player's options, with five bands and persistent presets.
+- **Music language:** choose English, Punjabi, Hindi or another of 16 languages, or All languages. The setting guides song, album and playlist discovery while preserving direct links and the original search text. It is a discovery preference, not verified audio-language classification.
+- **Appearance:** use **⋯ → Appearance** for Material, Light, Dark or Liquid. Material follows system night mode and uses dynamic colors on Android 12+. Light uses bright surfaces, Dark uses charcoal and green, and Liquid uses blue gradients and glass-like cards. Queue, player, equalizer and dialogs share the appearance.
+- MuseDock branding throughout current app text and project headings. Installation/storage identifiers remain compatible so an update can retain existing playlists, downloads and account settings.
 
-- **YouTube Music catalog:** Search defaults to Songs. Choose Albums to browse album/single/EP results, open ordered track lists, play or save them. Listen also offers Browse albums and Music playlist suggestions. The separate YouTube videos filter remains available.
-- **Equalizer:** Open Now playing → Equalizer or Info → Equalizer. Use five frequency bands or Flat, Bass boost, Vocal and Treble boost presets. Settings persist and apply to this player's streaming/offline session when the device supports audio effects.
-- **Lyrics:** Open Now playing → Lyrics for large text, timed highlighting, automatic scrolling, manual scrolling/follow control and tap-to-seek. Plain, missing, instrumental and error/retry states are supported. LRCLIB matching uses song title, artist and duration; successful lookups are cached for offline viewing.
+All **123 automated tests passed**, including the API29–37 playlist matrix, music-catalog checks, preference persistence, menu placement, language-aware search/paging and four native theme render sets. Debug/release lint passed with zero errors. The standalone, non-debuggable APK passes signature/alignment checks and matches the previous release's signing certificate. It is signed with the retained development key, not distributed through Play Store.
 
-All **127** automated tests passed, including the existing API 29–37 playlist matrix and 15 MuseDock UI/catalog cases across API 29 and 37. Debug/release lint passed with zero errors. APK signature and alignment checks passed; the certificate matches Soundzy 0.5.0. Framework screenshots use original test fixtures. These checks do not confirm physical-device installation or audible equalization.
+The app retains YouTube Music Songs/Albums discovery, public playlists, resumable offline audio saves, local MP3 conversion/export, the artwork queue and local Takeout history import. Music streaming uses NewPipe-resolved YouTube media streams shared with YouTube Music. Source availability can change. Audible equalizer output, MediaCodec conversion and installation on particular phones still need device checks; framework renders are not physical-phone screenshots. See [validation](https://github.com/shivamjswl/Soundzy/blob/main/VALIDATION.md) and [installation help](https://github.com/shivamjswl/Soundzy/blob/main/INSTALLATION.md).
 
-YouTube Music shares media IDs/delivery with YouTube, so catalog results still play through NewPipe-resolved YouTube audio streams. This is an unofficial integration without Premium, Spotify or Apple Music SDK access; original masters and source availability are not guaranteed. Live YouTube Music and LRCLIB requests returned HTTP 403 from this restricted cloud, so provider availability, lyric coverage and audible device effects still require phone testing. Opening Lyrics sends only track metadata to LRCLIB, not account profiles, audio or history exports.
+Google sign-in remains optional and unconfigured until OAuth registrations are supplied; it cannot expose YouTube watch history. Appearance and language preferences stay on the device. No lyrics provider is contacted.
 
-The previously reported Pixel Android 17 build CP3A.260905.009 installation rejection remains undiagnosed. If this APK is also rejected, preserve the exact `adb install -r MuseDock-0.6.0.apk` result; see [installation diagnostics](https://github.com/shivamjswl/Soundzy/blob/main/INSTALLATION.md).
-
-Google sign-in remains unconfigured until OAuth registrations are supplied and cannot expose YouTube history. Playlists, resumable offline saves, MP3 conversion/export, local Takeout history import and the artwork queue remain available.
-
-Application code is GPL-3.0-or-later. Third-party notices and corresponding source are included in the source download; lyrics retain their respective authors' rights and no lyric corpus is bundled. Earlier Soundzy downloads remain available by filename.
+Application source is GPL-3.0-or-later. Third-party notices and corresponding source are included in the source archive. Earlier download files remain available by filename.
