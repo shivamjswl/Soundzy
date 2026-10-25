@@ -13,7 +13,7 @@ public final class PlaybackService extends MediaSessionService {
     private MediaSession session;
     @Override public void onCreate(){
         super.onCreate();
-        CadenceApp app=CadenceApp.of(this);
+        MuseDockApp app=MuseDockApp.of(this);
         DefaultHttpDataSource.Factory http=new DefaultHttpDataSource.Factory()
             .setUserAgent(YouTubeRepository.USER_AGENT).setConnectTimeoutMs(20000).setReadTimeoutMs(30000)
             .setDefaultRequestProperties(java.util.Map.of("Referer","https://www.youtube.com/"));
@@ -48,5 +48,5 @@ public final class PlaybackService extends MediaSessionService {
     @Override public void onTaskRemoved(android.content.Intent intent){
         if(!player.getPlayWhenReady()||player.getMediaItemCount()==0)stopSelf();
     }
-    @Override public void onDestroy(){if(session!=null)session.release();if(player!=null)player.release();CadenceApp.of(this).equalizer.release();super.onDestroy();}
+    @Override public void onDestroy(){if(session!=null)session.release();if(player!=null)player.release();MuseDockApp.of(this).equalizer.release();super.onDestroy();}
 }

@@ -19,7 +19,7 @@ public final class OfflineService extends Service {
     private long notificationAt;
     public static void enqueue(Context context,Track track){enqueue(context,track,false);}
     public static void enqueue(Context context,Track track,boolean mp3){
-        CadenceApp.of(context).library.remember(track);
+        MuseDockApp.of(context).library.remember(track);
         context.startForegroundService(new Intent(context,OfflineService.class).setAction("download").putExtra("id",track.id()).putExtra("mp3",mp3));
     }
     public static void cancel(Context context,String id){context.startService(new Intent(context,OfflineService.class).setAction("cancel").putExtra("id",id));}
@@ -28,7 +28,7 @@ public final class OfflineService extends Service {
         latestStart=startId;
         if(intent==null){stopSelf(startId);return START_NOT_STICKY;}
         String id=intent.getStringExtra("id");if(!VideoIds.valid(id)){stopSelf(startId);return START_NOT_STICKY;}
-        Library db=CadenceApp.of(this).library;Track track=db.track(id);if(track==null){stopSelf(startId);return START_NOT_STICKY;}
+        Library db=MuseDockApp.of(this).library;Track track=db.track(id);if(track==null){stopSelf(startId);return START_NOT_STICKY;}
         if("cancel".equals(intent.getAction())){cancelled.add(id);if(id.equals(active)&&call!=null)call.cancel();if(pending.isEmpty())stopSelf(startId);return START_NOT_STICKY;}
         boolean mp3=intent.getBooleanExtra("mp3",false);String existing=db.offline(id);
         if(pending.isEmpty())startForeground(42,notification("Preparing offline audio…",0,0,id,false));
@@ -39,7 +39,7 @@ public final class OfflineService extends Service {
     }
     private void checkCancelled(String id)throws IOException{if(stopping||cancelled.contains(id)||Thread.currentThread().isInterrupted())throw new IOException("Download cancelled.");}
     private void runDownload(Track track,boolean mp3,String existing){
-        String id=track.id();active=id;Library db=CadenceApp.of(this).library;
+        String id=track.id();active=id;Library db=MuseDockApp.of(this).library;
         File original=existing==null?null:new File(existing);PowerManager.WakeLock wake=null;
         try{
             checkCancelled(id);wake=getSystemService(PowerManager.class).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"MuseDock:OfflineAudio");wake.acquire(60*60*1000L);
@@ -47,8 +47,8 @@ public final class OfflineService extends Service {
             if(original==null){
                 db.download(track,"downloading",null,"");changed();File source=new File(dir,id+".source");
                 if(!source.isFile()){
-                    ResumableDownload downloader=new ResumableDownload(CadenceApp.of(this).youtube.client);
-                    downloader.save(refresh->CadenceApp.of(this).youtube.audio(id,refresh),source,(bytes,total)->{
+                    ResumableDownload downloader=new ResumableDownload(MuseDockApp.of(this).youtube.client);
+                    downloader.save(refresh->MuseDockApp.of(this).youtube.audio(id,refresh),source,(bytes,total)->{
                         checkCancelled(id);if(dir.getUsableSpace()<16*1024*1024L)throw new IOException("Device storage is full. Free space and tap Retry.");
                         report(track.title(),bytes,total,id,false);
                     },current->call=current);
@@ -67,7 +67,7 @@ public final class OfflineService extends Service {
                 File destination=new File(dir,id+"."+AudioFiles.extension(original));Files.move(original.toPath(),destination.toPath(),StandardCopyOption.REPLACE_EXISTING,StandardCopyOption.ATOMIC_MOVE);db.download(track,"ready",destination.getAbsolutePath(),"");
             }
         }catch(Exception failure){
-            CadenceApp.of(this).youtube.invalidate(id);
+            MuseDockApp.of(this).youtube.invalidate(id);
             String message=cancelled.contains(id)?"Cancelled. Tap Retry to continue downloading.":failure.getMessage()==null?"Download failed. Tap Retry to continue.":failure.getMessage();
             if(original!=null&&original.isFile()&&original.length()>0)db.download(track,"ready",original.getAbsolutePath(),"MP3 conversion did not finish. Original audio is available offline. "+message);
             else db.download(track,"failed",null,message);
@@ -87,7 +87,7 @@ public final class OfflineService extends Service {
     private void changed(){sendBroadcast(new Intent(CHANGED).setPackage(getPackageName()));}
     @Override public void onTimeout(int startId,int fgsType){stopping=true;if(call!=null)call.cancel();stopSelf();}
     @Override public void onDestroy(){
-        stopping=true;if(call!=null)call.cancel();worker.shutdownNow();Library db=CadenceApp.of(this).library;
+        stopping=true;if(call!=null)call.cancel();worker.shutdownNow();Library db=MuseDockApp.of(this).library;
         for(String id:pending)if(!id.equals(active)){Track track=db.track(id);if(track!=null){String file=db.offline(id);db.download(track,file==null?"failed":"ready",file,"Interrupted. Tap Retry to continue.");}}
         changed();super.onDestroy();
     }

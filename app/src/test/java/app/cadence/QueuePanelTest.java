@@ -37,7 +37,7 @@ public final class QueuePanelTest {
             QueuePanel panel=new QueuePanel(activity,player,(track,size)->new RecordArt(activity));panel.show();Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertNotNull(dialog);View root=dialog.getWindow().getDecorView();
             assertTrue(hasText(root,"Your queue"));assertTrue(hasText(root,"NOW PLAYING"));assertTrue(hasText(root,"UP NEXT  ·  2"));assertTrue(hasText(root,"Moonlit drive"));
             root.measure(View.MeasureSpec.makeMeasureSpec(1080,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(2100,View.MeasureSpec.EXACTLY));root.layout(0,0,1080,2100);android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(1080,2100,android.graphics.Bitmap.Config.ARGB_8888);root.draw(new android.graphics.Canvas(bitmap));
-            File file=new File(System.getProperty("cadence.validation.dir"),"queue-framework.png");try(FileOutputStream out=new FileOutputStream(file)){assertTrue(bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out));}finally{bitmap.recycle();}
+            File file=new File(System.getProperty("musedock.validation.dir"),"queue-framework.png");try(FileOutputStream out=new FileOutputStream(file)){assertTrue(bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out));}finally{bitmap.recycle();}
             panel.dismiss();
         }
     }

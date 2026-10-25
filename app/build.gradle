@@ -10,8 +10,8 @@ android {
         applicationId 'app.cadence'
         minSdk 29
         targetSdk 37
-        versionCode 6
-        versionName '0.6.0'
+        versionCode 7
+        versionName '0.7.0'
         resValue 'string', 'app_version', versionName
         resValue 'string', 'google_web_client_id', googleClient
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -33,7 +33,7 @@ android {
             jvmArgs '--add-exports=java.base/jdk.internal.access=ALL-UNNAMED'
             def testHome = layout.buildDirectory.dir('test-home').get().asFile
             systemProperty 'user.home', testHome.absolutePath
-            systemProperty 'cadence.validation.dir', rootProject.file('validation').absolutePath
+            systemProperty 'musedock.validation.dir', rootProject.file('validation').absolutePath
             doFirst { testHome.mkdirs() }
             systemProperty 'robolectric.dependency.repo.url', 'https://repo.maven.apache.org/maven2'
             ['https.proxyHost','https.proxyPort','http.proxyHost','http.proxyPort','http.nonProxyHosts'].each { key ->

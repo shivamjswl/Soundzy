@@ -1,26 +1,24 @@
 # MuseDock
 
-Developed by **Shivam Jaiswal**. Version **0.6.0**, for **Android 10 / API 29 and newer**.
+Developed by **Shivam Jaiswal**. Version **0.7.0**, for **Android 10 / API 29 and newer**.
 
-[Download APK](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/MuseDock-0.6.0.apk) · [Complete corresponding source archive](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/MuseDock-0.6.0-source.zip)
+[Download APK](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/MuseDock-0.7.0.apk) · [Complete corresponding source archive](https://raw.githubusercontent.com/shivamjswl/soundzy/downloads/MuseDock-0.7.0-source.zip)
 
-MuseDock is the renamed Soundzy/Cadence app. The application ID (`app.cadence`), database, and signing key stay the same so the update can retain existing playlists and downloads. The project directory remains `/workspace/Cadence`.
+MuseDock is a native Android music player developed by Shivam Jaiswal. Search songs and albums, build playlists and keep offline copies on your device.
 
-## New in 0.6.0
+## New in 0.7.0
 
-- **MuseDock** branding replaces Soundzy. The package, account preference storage, database and signing key stay the same for updates; the GitHub repository remains `shivamjswl/Soundzy`.
-- Search defaults to **YouTube Music → Songs**. Switch to **Albums** for album/single/EP results with artwork and artists, then open, play, page through, and save their ordered tracks. **YouTube videos** remains available as a separate filter. The Listen screen also offers **Browse albums**, and suggested playlists now use YouTube Music's playlist catalog.
-- **Now playing → Equalizer**, or **Info → Equalizer**, opens five frequency controls and Flat, Bass boost, Vocal and Treble boost presets. Settings and the on/off toggle persist. The player owns the effect on its own audio session and reattaches it when the session changes; unsupported outputs show a status instead of breaking playback. The requested curve is mapped to available device bands and clamped to device gain limits.
-- **Now playing → Lyrics** opens a large lyric view with active-line highlighting, automatic scrolling, free scrolling, follow-song control and tap-to-seek. Tracks without timestamps show clearly labeled plain lyrics. Missing and instrumental tracks have their own states, and provider errors offer Retry.
-- Lyrics are matched by title, artist and duration through LRCLIB's exact metadata API; no arbitrary search result is substituted. Loaded lyrics are cached privately for offline viewing (100 entries / 20 MB maximum). Closing the view cancels its worker and timers; stale responses cannot replace the current track's lyrics.
+- **Compact Library:** smaller headings and playlist names, tighter artwork/rows, clear navigation arrows and a quieter history-import link.
+- **Clean player controls:** lyrics and its provider integration have been removed. Equalizer is a compact menu item in **⋯ → Equalizer**, both in the app header and the current song's options.
+- **Music language:** choose All languages, English, Hindi, Punjabi, Tamil, Telugu, Bengali, Marathi, Gujarati, Kannada, Malayalam, Urdu, Spanish, Korean, Japanese, Arabic or French. The preference is saved and guides song, album and suggested-playlist searches. It enriches provider queries; it is not audio-language verification and can return mixed results. Direct video/playlist links are preserved.
+- **Appearance:** open **⋯ → Appearance** and choose Material, Light, Dark or Liquid. Material follows system light/dark mode and uses wallpaper colors on Android 12+. Light uses bright green-accented surfaces, Dark uses charcoal and green, and Liquid uses blue gradients and glass-like cards. Queue, player, artwork, equalizer and native dialogs share the selected appearance.
+- **MuseDock branding:** all current app text and developer-facing project headings use MuseDock. Technical installation/storage identifiers are retained for compatible updates and data continuity.
 
-Songs, albums and playlists use NewPipe's actual YouTube Music catalog filters. YouTube Music and YouTube share video IDs and media delivery, so playback still resolves YouTube media streams through NewPipe. This is an unofficial integration; it does not use a Premium account, guarantee original masters, lossless audio, or unrestricted catalog availability. Album search can also return singles and EPs. Spotify/Apple Music subscription playback would require their supported SDKs, account authorization and service terms; neither service is silently used here.
-
-Android 10+ remains the minimum, with compile/target API 37. The previously reported Pixel Android 17 installation failure (CP3A.260905.009) still has no package-manager diagnostic; a successful framework check does not prove installation on that phone. See [installation diagnostics](INSTALLATION.md).
+Songs, albums and playlists use NewPipe's actual YouTube Music catalog filters. YouTube Music and YouTube share media IDs and delivery, so playback resolves their shared media streams through NewPipe. Catalog access is unofficial; availability varies by source and region. The separate YouTube videos filter remains available.
 
 ## Install the update
 
-Download `MuseDock-0.6.0.apk` above and open it on the phone to update the existing Cadence/Soundzy/MuseDock installation. The application ID and signing certificate match previous supplied builds. Existing data is retained by a compatible Android update; uninstalling clears app-private data.
+Download `MuseDock-0.7.0.apk` above and open it on the phone to update the existing installation. The application ID and signing certificate match previous supplied builds. Existing data is retained by a compatible Android update; uninstalling clears app-private data.
 
 This is a non-debuggable APK signed with the existing development key, not a Play Store release. Actual installation on the affected Pixel, live YouTube behavior, and device codec behavior still need phone testing.
 
@@ -86,6 +84,6 @@ See [VALIDATION.md](VALIDATION.md) for executed checks, remaining phone checks, 
 
 ## Privacy and licenses
 
-Music searches use YouTube Music or the selected YouTube video filter; playback and artwork requests go to YouTube/Google media and image hosts. Opening Lyrics sends song title, artist and duration to `lrclib.net` for matching. Returned lyrics are cached locally for offline use; no account, history export, audio file or Google profile is sent to LRCLIB. Lyrics coverage, matching and timing can vary. The lyrics view credits LRCLIB and links to its website. Selected history exports and audio conversion stay on the device. Exporting writes to the destination/provider you choose in Android's file picker. Optional Google sign-in uses Google's native identity flow and stores only display name/email locally; no ID token is persisted or uploaded. No analytics or developer-hosted server is used.
+Music searches use YouTube Music or the selected YouTube video filter; playback and artwork requests go to YouTube/Google media and image hosts. Music-language preferences guide those search queries. Appearance and language settings are stored locally. No lyrics provider is contacted. Selected history exports and audio conversion stay on the device. Exporting writes to the destination/provider you choose in Android's file picker. Optional Google sign-in uses Google's native identity flow and stores only display name/email locally; no ID token is persisted or uploaded. No analytics or developer-hosted server is used.
 
 Application code: GPL-3.0-or-later. Third-party material retains its own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), `licenses/`, and included source headers. The optional Google-enabled build is subject to Google's SDK terms and must be reviewed for license compatibility before redistribution. MuseDock is not affiliated with YouTube, Spotify, or Google.

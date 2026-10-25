@@ -3,21 +3,9 @@
     29,
     37
   ],
-  "cases": [
+  "catalog_cases": [
     {
       "test": "equalizerIsDiscoverableAndPresetControlsPersist[29]",
-      "passed": true
-    },
-    {
-      "test": "lateLyricsFromPreviousTrackCannotReplaceCurrentTrack[29]",
-      "passed": true
-    },
-    {
-      "test": "lyricsFollowSeekAndTrackChangesWithoutStaleText[29]",
-      "passed": true
-    },
-    {
-      "test": "lyricsFailureCanBeRetriedAndPlainTextIsLabeled[29]",
       "passed": true
     },
     {
@@ -37,18 +25,6 @@
       "passed": true
     },
     {
-      "test": "lateLyricsFromPreviousTrackCannotReplaceCurrentTrack",
-      "passed": true
-    },
-    {
-      "test": "lyricsFollowSeekAndTrackChangesWithoutStaleText",
-      "passed": true
-    },
-    {
-      "test": "lyricsFailureCanBeRetriedAndPlainTextIsLabeled",
-      "passed": true
-    },
-    {
       "test": "albumBrowsingPagesDeduplicatesOpensAndSavesTracks",
       "passed": true
     },
@@ -59,12 +35,60 @@
     {
       "test": "musicFiltersReachTheMusicExtractor",
       "passed": true
+    }
+  ],
+  "appearance_cases": [
+    {
+      "test": "materialFollowsSystemNightModeAndPalettesRemainReadable[29]",
+      "passed": true
     },
     {
-      "test": "newPanelsRenderWithOriginalTestLyrics",
+      "test": "libraryUsesSmallerTypeAndMuseDockBranding[29]",
+      "passed": true
+    },
+    {
+      "test": "appearancePickerPersistsSelectionAndFreshActivityUsesIt[29]",
+      "passed": true
+    },
+    {
+      "test": "languageSelectionPersistsAndAppliesAcrossSearchPages[29]",
+      "passed": true
+    },
+    {
+      "test": "equalizerLivesInOverflowAndPlayerHasNoLargeExtras[29]",
+      "passed": true
+    },
+    {
+      "test": "materialFollowsSystemNightModeAndPalettesRemainReadable",
+      "passed": true
+    },
+    {
+      "test": "libraryUsesSmallerTypeAndMuseDockBranding",
+      "passed": true
+    },
+    {
+      "test": "appearancePickerPersistsSelectionAndFreshActivityUsesIt",
+      "passed": true
+    },
+    {
+      "test": "languageSelectionPersistsAndAppliesAcrossSearchPages",
+      "passed": true
+    },
+    {
+      "test": "equalizerLivesInOverflowAndPlayerHasNoLargeExtras",
+      "passed": true
+    },
+    {
+      "test": "libraryAndPlayerRenderInAllFourThemes",
       "passed": true
     }
   ],
-  "native_audio_equalizer_hearing_test": "not executed",
-  "live_providers": "HTTP 403 in cloud; not verified on phone"
+  "themes": [
+    "Material",
+    "Light",
+    "Dark",
+    "Liquid"
+  ],
+  "lyric_feature": "removed, including provider client and app DEX classes",
+  "physical_device_checks": "not executed"
 }

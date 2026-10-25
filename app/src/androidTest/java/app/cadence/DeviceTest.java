@@ -15,11 +15,11 @@ import java.util.concurrent.atomic.*;
 
 @RunWith(AndroidJUnit4.class)
 public final class DeviceTest {
-    private CadenceApp app;
+    private MuseDockApp app;
     private String playlist;
     private final Track one=new Track("testtone001","Test tone one","Cadence tests","",2);
     private final Track two=new Track("testtone002","Test tone two","Cadence tests","",2);
-    @Before public void setup(){app=CadenceApp.of(InstrumentationRegistry.getInstrumentation().getTargetContext());playlist=app.library.createPlaylist("Test "+System.nanoTime());}
+    @Before public void setup(){app=MuseDockApp.of(InstrumentationRegistry.getInstrumentation().getTargetContext());playlist=app.library.createPlaylist("Test "+System.nanoTime());}
     @After public void cleanup(){app.library.deletePlaylist(playlist);app.library.removeDownload(one.id());app.library.removeDownload(two.id());}
     @Test public void playlistOrderAndDuplicateMembershipSurviveDatabaseReopen(){
         app.library.add(playlist,one);app.library.add(playlist,two);app.library.add(playlist,one);

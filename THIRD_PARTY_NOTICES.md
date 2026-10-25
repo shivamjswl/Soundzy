@@ -1,6 +1,6 @@
 # Third-party notices
 
-Cadence uses:
+MuseDock uses:
 
 | Component | Version/revision | License | Source |
 | --- | --- | --- | --- |
@@ -17,21 +17,22 @@ Cadence uses:
 | Kotlin stdlib (transitive) | Resolved by AndroidX/OkHttp | Apache-2.0 | https://github.com/JetBrains/kotlin |
 | Guava (transitive) | Resolved by AndroidX | Apache-2.0 | https://github.com/google/guava |
 
-The Android UI and application code are original to Cadence. Spotify is a product reference only; no Spotify branding, assets, or APIs are included. REA code is not linked into the application.
+The Android UI and application code are original to MuseDock. Spotify is a product reference only; no Spotify branding, assets, or APIs are included. REA code is not linked into the application.
 
 Upstream extractor and nanojson source headers are retained. The complete-source archive contains their source trees. Dependency archives also include their bundled `META-INF` license notices; the Android package retains merged Java-resource notices. See `licenses/` for the principal license texts. This inventory does not replace upstream copyright notices.
 
-## Soundzy 0.3.0 additions
+## MuseDock 0.3.0 additions
 
-- **jump3r 1.0.5** (Java LAME port), LGPL-2.1-or-later. Source: https://github.com/Sciss/Jump3r and the Maven Central `de.sciss:jump3r:1.0.5:sources` artifact. Exact corresponding source is included as `third_party/jump3r-1.0.5-sources.jar`; LGPL text is in `licenses/LGPL-2.1.txt`. Soundzy uses its MP3 core through an original adapter and does not modify the library. LAME and jump3r's upstream copyright/license headers are retained in the source archive.
-- The default distributed Soundzy APK does **not** bundle the optional Google sign-in SDKs. A configured Google-enabled build adds AndroidX Credentials 1.5.0 (Apache-2.0), its Google Play services adapter 1.5.0 (Apache-2.0), Google ID 1.1.1 and transitive Google Play services libraries (Android Software Development Kit License). Google's SDK terms: https://developer.android.com/studio/terms.html . Review the configured build's licensing compatibility before redistributing it; these components are not relicensed by Soundzy's GPL notice.
+- **jump3r 1.0.5** (Java LAME port), LGPL-2.1-or-later. Source: https://github.com/Sciss/Jump3r and the Maven Central `de.sciss:jump3r:1.0.5:sources` artifact. Exact corresponding source is included as `third_party/jump3r-1.0.5-sources.jar`; LGPL text is in `licenses/LGPL-2.1.txt`. MuseDock uses its MP3 core through an original adapter and does not modify the library. LAME and jump3r's upstream copyright/license headers are retained in the source archive.
+- The default distributed MuseDock APK does **not** bundle the optional Google sign-in SDKs. A configured Google-enabled build adds AndroidX Credentials 1.5.0 (Apache-2.0), its Google Play services adapter 1.5.0 (Apache-2.0), Google ID 1.1.1 and transitive Google Play services libraries (Android Software Development Kit License). Google's SDK terms: https://developer.android.com/studio/terms.html . Review the configured build's licensing compatibility before redistributing it; these components are not relicensed by MuseDock's GPL notice.
 - MockWebServer 4.12.0, JUnit, Robolectric, and generated test audio are test-only; MockWebServer is Apache-2.0 and is not a runtime download server.
 
-## Soundzy 0.5.0 additions
+## MuseDock 0.5.0 additions
 
 - AndroidX Activity 1.10.1 and Core 1.15.0, Apache-2.0, https://android.googlesource.com/platform/frameworks/support . Their upstream resource notices are retained in the package.
 - desugar_jdk_libs 2.1.5, GPL-2.0 with the Classpath Exception, https://github.com/google/desugar_jdk_libs . Its corresponding source archive and upstream license text are supplied in `third_party/` and `licenses/` respectively. It provides Java library backports for older Android releases; upstream notices remain applicable.
 
-## MuseDock 0.6.0 service integration
 
-Lyrics are retrieved on demand from LRCLIB's public API at https://lrclib.net (documentation: https://lrclib.net/docs). The lyrics surface provides visible provider attribution and a website link. No LRCLIB client library or lyric corpus is bundled. Returned text retains its respective authors' rights; MuseDock's application license does not relicense lyrics. Test lyric lines are original fixtures created for this project. YouTube Music catalog support uses the already-pinned NewPipe Extractor, without a new SDK or subscription integration.
+## Current provider integration
+
+YouTube Music catalog support uses the already-pinned NewPipe Extractor. MuseDock 0.7.0 removes the lyrics provider integration and does not bundle a lyric corpus. Appearance and music-language preferences add no third-party runtime SDKs.

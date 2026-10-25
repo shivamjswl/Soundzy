@@ -26,6 +26,7 @@ public final class Icons extends View {
             case "previous" -> {p.setStyle(Paint.Style.FILL);path(canvas,19,4,7,12,19,20,19,4);canvas.drawRect(3,4,6,20,p);}
             case "heart", "liked" -> {if(kind.equals("liked"))p.setStyle(Paint.Style.FILL);Path h=shape;h.reset();h.moveTo(12,21);h.cubicTo(9,18,2,13,2,8);h.cubicTo(2,1,10,1,12,6);h.cubicTo(14,1,22,1,22,8);h.cubicTo(22,13,15,18,12,21);canvas.drawPath(h,p);}
             case "more" -> {p.setStyle(Paint.Style.FILL);for(int x=5;x<=19;x+=7)canvas.drawCircle(x,12,1.5f,p);}
+            case "chevron" -> {path(canvas,9,4,17,12,9,20);}
             case "back" -> {path(canvas,15,4,7,12,15,20);}
             case "down" -> {path(canvas,5,8,12,15,19,8);}
             case "add" -> {line(canvas,12,4,12,20);line(canvas,4,12,20,12);}

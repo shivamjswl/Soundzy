@@ -8,7 +8,7 @@ This is an external prerequisite, not a key bundled with the test app. The suppl
 
 1. Open [Google Cloud Console](https://console.cloud.google.com/) and create or select your own project.
 2. In **Google Auth Platform**, configure Branding, Audience, and the OAuth consent screen. Use MuseDock as the application name and your own support email. If the project is in Testing, add the Google accounts that will test it to the test-user list.
-3. Create an OAuth client with application type **Android**. Use package name **`app.cadence`**. This package intentionally stays unchanged from the original Cadence build so the MuseDock update preserves existing data.
+3. Create an OAuth client with application type **Android**. Use package name **`app.cadence`**. This technical package ID is retained so compatible MuseDock updates preserve existing data.
 4. Register the signing certificate's SHA-1 fingerprint. For the development APK supplied in this chat it is:
 
    ```text

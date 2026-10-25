@@ -10,15 +10,15 @@ import static org.junit.Assert.*;
 import java.io.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk=36,application=CadenceApp.class,qualifiers="w411dp-h914dp-420dpi")
+@Config(sdk=36,application=MuseDockApp.class,qualifiers="w411dp-h914dp-420dpi")
 @LooperMode(LooperMode.Mode.PAUSED)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public final class FrameworkTest {
-    private CadenceApp app;
+    private MuseDockApp app;
     private final Track one=new Track("testtone001","First song","Test artist","",120);
     private final Track two=new Track("testtone002","Second song","Test artist","",180);
     private FakePlaylists source;
-    @Before public void setup(){app=(CadenceApp)RuntimeEnvironment.getApplication();source=new FakePlaylists();app.playlists=source;}
+    @Before public void setup(){app=(MuseDockApp)RuntimeEnvironment.getApplication();source=new FakePlaylists();app.playlists=source;}
     private final class FakePlaylists implements PlaylistSource {
         boolean fail=false;
         @Override public java.util.List<Suggestion> suggest(String query)throws Exception{
@@ -54,9 +54,9 @@ public final class FrameworkTest {
         String id=app.library.createPlaylist("My evening mix");app.library.add(id,one);
         try(var controller=Robolectric.buildActivity(MainActivity.class).setup()){
             MainActivity activity=controller.get();View root=activity.getWindow().getDecorView();
-            assertNotNull(find(root,"Find your\nfrequency."));capture(root,"home-framework.png");click(root,"Library");assertNotNull(find(root,"My evening mix"));capture(root,"library-framework.png");
+            assertNotNull(find(root,"Your daily mix."));capture(root,"home-framework.png");click(root,"Library");assertNotNull(find(root,"My evening mix"));capture(root,"library-framework.png");
             click(root,"Offline");assertNotNull(find(root,"0 songs offline"));assertNotNull(find(root,"Find songs"));
-            click(root,"Search");assertNotNull(find(root,"Discover your\nnext favorite."));
+            click(root,"Search");assertNotNull(find(root,"Find your next listen."));
         }
     }
     @Test public void playlistImportPreservesOrderWithoutDuplicatingSongs(){
@@ -93,7 +93,7 @@ public final class FrameworkTest {
     @Test public void infoShowsDeveloperAndCurrentVersion(){
         Shadows.shadowOf(app).declareComponentUnbindable(new android.content.ComponentName(app,PlaybackService.class));
         try(var controller=Robolectric.buildActivity(MainActivity.class).setup()){
-            View root=controller.get().getWindow().getDecorView();View info=findDescription(root,"App info");assertNotNull(info);info.performClick();
+            View root=controller.get().getWindow().getDecorView();View info=findDescription(root,"MuseDock options");assertNotNull(info);info.performClick();org.robolectric.shadows.ShadowPopupMenu.getLatestPopupMenu().getMenu().performIdentifierAction(5,0);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             android.app.AlertDialog dialog=org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog();assertNotNull(dialog);
             assertTrue(((TextView)dialog.findViewById(android.R.id.message)).getText().toString().contains("Developed by Shivam Jaiswal"));dialog.dismiss();
         }
@@ -103,7 +103,7 @@ public final class FrameworkTest {
         String id=app.library.importHistory(java.util.List.of(new HistoryImport.Entry(new Track(one.id(),"Imported title","YouTube history","",0),timestamp),new HistoryImport.Entry(two,1000)));
         assertEquals(java.util.List.of(one,two),app.library.playlistTracks(id));assertEquals(one.id(),app.library.recent().get(0).id());
     }
-    @Test public void soundzyAccountExplainsHistoryAndUnconfiguredLogin(){
+    @Test public void accountExplainsHistoryAndUnconfiguredLogin(){
         Shadows.shadowOf(app).declareComponentUnbindable(new android.content.ComponentName(app,PlaybackService.class));
         try(var controller=Robolectric.buildActivity(MainActivity.class).setup()){
             View root=controller.get().getWindow().getDecorView();assertNotNull(find(root,"MuseDock"));click(root,"Library");click(root,"Import YouTube history");
@@ -133,7 +133,7 @@ public final class FrameworkTest {
     private void capture(View root,String name){
         root.measure(View.MeasureSpec.makeMeasureSpec(1080,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(2400,View.MeasureSpec.EXACTLY));root.layout(0,0,1080,2400);
         android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(1080,2400,android.graphics.Bitmap.Config.ARGB_8888);root.draw(new android.graphics.Canvas(bitmap));
-        File dir=new File(System.getProperty("cadence.validation.dir"));assertTrue(dir.isDirectory()||dir.mkdirs());
+        File dir=new File(System.getProperty("musedock.validation.dir"));assertTrue(dir.isDirectory()||dir.mkdirs());
         try(FileOutputStream out=new FileOutputStream(new File(dir,name))){assertTrue(bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,out));}catch(IOException e){throw new AssertionError(e);}finally{bitmap.recycle();}
     }
     private TextView find(View root,String text){

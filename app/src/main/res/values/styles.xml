@@ -1,10 +1,28 @@
 <resources>
     <style name="AppTheme" parent="android:style/Theme.Material.NoActionBar">
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">#B8F36D</item>
+        <item name="android:colorAccent">#43DF86</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowActionModeOverlay">true</item>
-        <item name="android:windowBackground">#101310</item>
+        <item name="android:windowBackground">#0E1210</item>
+    </style>
+    <style name="AppThemeLight" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#146C43</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">#F5F8F6</item>
+    </style>
+    <style name="AppThemeMaterialLight" parent="AppThemeLight">
+        <item name="android:colorAccent">@color/material_accent_light</item>
+    </style>
+    <style name="AppThemeMaterialDark" parent="AppTheme">
+        <item name="android:colorAccent">@color/material_accent_dark</item>
+    </style>
+    <style name="AppThemeLiquid" parent="AppTheme">
+        <item name="android:colorAccent">#A9CAFF</item>
+        <item name="android:windowBackground">#111A30</item>
     </style>
 </resources>

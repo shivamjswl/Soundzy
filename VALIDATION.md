@@ -1,51 +1,49 @@
-# MuseDock 0.6.0 validation
+# MuseDock 0.7.0 validation
 
-Checked on 25 October 2026. Source repository remains `shivamjswl/Soundzy`; the app and downloadable artifacts are renamed MuseDock.
+Checked on 25 October 2026.
 
 | Check | Result |
 | --- | --- |
-| Release APK and instrumentation APK assembly | Passed |
-| APK identity | `app.cadence`, versionCode 6, versionName 0.6.0, label MuseDock |
-| Android SDK declarations | Minimum API 29 (Android 10), compile/target API 37 (Android 17); no maximum SDK |
+| Release APK / instrumentation APK assembly | Passed |
+| Gradle project / Application class | MuseDock / MuseDockApp |
+| APK identity | MuseDock, versionCode 7, versionName 0.7.0; retained installation identity |
+| SDK declarations | Minimum API 29 (Android 10), compile/target 37 (Android 17), no maximum SDK |
 | Release packaging | Debugging disabled; no testOnly flag; standalone APK |
-| APK signature / upgrade continuity | Verified for API 29–37; v3 signature; certificate SHA-256 matches 0.5.0 |
-| APK alignment / ABI | zipalign passed with 16 KiB checks; no native .so libraries or ABI splits |
-| Java API backports | Core library desugaring present in APK DEX |
-| JVM/framework suite | 127 passed; 0 failed; 0 skipped |
-| Existing playlist SDK matrix | 45 checks across API 29/30/31/32/33/34/35/36/37, all passed |
-| MuseDock feature UI/routing checks | 15 checks across API 29 and 37, including one native-render case on API 37 |
-| Debug / release lint | Zero errors; advisory warnings retained in validation/ |
-| Live YouTube Music / LRCLIB lookup | HTTP 403 from this cloud; not verified live |
-| Physical device installation / audible equalizer | Not executed here |
-| Previously affected Pixel CP3A.260905.009 installation | Still unverified; no package-manager diagnostic provided |
+| APK signature | Verified for API 29–37; v3 signature; certificate matches MuseDock 0.6.0 |
+| Alignment / ABI | zipalign passed with 16 KiB checks; no native .so libraries or ABI splits |
+| Java backports | Desugared Java library classes present in DEX |
+| Lyrics removal | No lyric control in player/Library checks; provider source removed; app lyric DEX classes absent |
+| JVM/framework suite | 123 passed; 0 failed; 0 skipped |
+| Playlist SDK matrix | 45 checks across API 29/30/31/32/33/34/35/36/37 |
+| Catalog feature checks | 8 checks across API 29 and 37 |
+| Appearance / language UI | 11 checks across API 29 and 37, including a native-render case on API 37 |
+| Theme renders | Library, player and equalizer captured for all four themes |
+| Debug / release lint | Zero errors; advisory warnings recorded in validation/ |
+| Physical device / audible equalizer | Not executed in this cloud |
 
-## What the tests establish
+## What changed and what the tests establish
 
-The new UI tests use the actual activity, SQLite database, native Android widgets, a real ExoPlayer timeline and generated silence when a prepared seekable timeline is needed. They check MuseDock branding, Songs and YouTube videos mode selection, album paging/deduplication/open/save, equalizer discovery and persistent preset/toggle controls, synced lyric rendering and tap-to-seek, a nonseekable-player guard, track changes, stale-response rejection, provider error/retry and labeled plain lyrics. The catalog routing check constructs NewPipe's actual search handlers and verifies music modes select its YouTube Music extractor. Album data in UI tests is explicitly injected fixture data, not a live catalog result.
+Library headings are 26 sp and playlist names 15 sp, with smaller artwork and compact rows that can grow for larger system fonts. Lyrics and its provider classes are removed. Equalizer remains functional through the app/header and player overflow menus. Native UI tests open the actual player through its mini-player, verify missing large controls, and open the equalizer from its menu. Current app text and project headings use MuseDock. The original installation/storage identifiers and signing certificate are intentionally retained for data-compatible updates.
 
-AudioEqualizerTest checks persisted settings, interpolation, device-gain clamping, bypass, unsupported-effect handling, session changes and release using an injected effect adapter. This does not measure audible equalization or verify a phone audio driver. The production adapter uses Android Equalizer on the ExoPlayer session, never global session 0, and the manifest declares MODIFY_AUDIO_SETTINGS.
+ThemePalette supplies colors, system-bar appearance and native window/dialog styles for Material, Light, Dark and Liquid. Material follows system night mode and uses dynamic accent resources on Android 12+, with fallback colors on older Android. Liquid is a gradient/glass-like visual treatment without a blur API requirement. Tests verify preference persistence, Material light/night selection, text contrast, smaller Library type, menu placement, and actual widget rendering. The native-render case captures Library/player/equalizer for every palette using generated original test metadata. Framework renders are not screenshots from a phone.
 
-LyricsRepositoryTest uses real local HTTP requests through MockWebServer and original test lyric text. It verifies normalized exact-metadata queries, request attribution, matching/duration rejection, response-size bounds, missing/provider-error states, corrupt-cache recovery, refresh and cached retrieval without another HTTP request. LyricsTest covers repeated timestamps, decimal precision, positive/negative offsets, active-line boundaries, plain/instrumental/empty content and a 5,000-line bound. These tests do not establish real LRCLIB song coverage or matching accuracy for every upload.
+MusicLanguage offers All languages and 16 specific languages including English and Punjabi. It persists a discovery preference and enriches songs, albums and suggested-playlist queries. The UI test changes language and exercises search/page behavior without duplicating the language keyword or changing the user's displayed query. Unit tests preserve direct video and playlist links. This is query-guided discovery, not audio-language verification or a guarantee that every provider result matches the chosen language.
 
-The existing suite also covers SQLite playlist persistence, history import, stable queue edits, resumable downloads and actual Java MP3 encoding. Native framework renders in validation/ use original test fixtures; `musedock-lyrics-framework.png` and `musedock-equalizer-framework.png` show the new surfaces. They are not screenshots from a physical phone. No third-party song audio or lyric corpus is bundled.
+Existing catalog tests verify routing to NewPipe's YouTube Music extractor, album opening/paging/deduplication/save, and the YouTube videos alternative. Existing database, custom-playlist, queue, download recovery, history-import and Java MP3 encoder tests also pass. Equalizer effect-adapter tests check settings persistence, interpolation, hardware clamping, bypass, unsupported effects and session ownership; they do not establish audible output from a phone's audio driver.
 
-## Provider and device limits
+The obsolete lyric tests were removed together with the lyric feature. No new lyric lookup is made and no lyric corpus is bundled. Other service limitations remain: catalog access is unofficial, source availability can change, and live YouTube/Music requests were previously denied by this restricted cloud. No new live-service, MediaCodec conversion or physical installation success is claimed.
 
-Songs, Albums and playlist discovery use NewPipe's music_songs, music_albums and music_playlists filters. The optional YouTube videos filter remains separate. Album track lists and playback resolve through YouTube, which shares media IDs/delivery with YouTube Music. This is an unofficial catalog integration, not an official Premium/Spotify/Apple Music SDK or a guarantee of original masters, lossless audio or source availability. Live requests to music.youtube.com and lrclib.net returned HTTP 403 in the current restricted cloud; tests do not bypass that restriction.
+The retained package ID, SQLite filename, account preferences and original signing key allow compatible updates to keep playlists/downloads. The Application class and Gradle project name now use MuseDock. No database schema change, reset or key replacement was introduced. The previously reported Pixel Android 17 build CP3A.260905.009 installation issue still needs device confirmation or an exact package-manager error; framework and APK checks do not diagnose that phone's installer.
 
-The lyric surface sends title, artist and duration to LRCLIB only when opened. Returned lyrics are cached privately with a 100-entry/20-MB cap, credited in the view and may be missing, mistimed or unmatched. Local files, history exports and account details are not sent to the lyric provider. Closing the view interrupts pending work and removes its timers; stale results are ignored. Auto-scrolling pauses for a manual gesture and resumes through its follow control or a line seek.
+Toolchain: JDK 21, AGP 9.3.3, checksum-pinned Gradle 9.5.0, SDK Platform 37.0 / Build Tools 37.0.0, Robolectric 4.17. The complete source download includes pinned extractor/nanojson and corresponding jump3r/desugar sources and notices. Google sign-in still needs OAuth setup and cannot expose YouTube watch history.
 
-The application ID, original signing key, database schema and legacy account preference key are preserved. The user previously reported a Pixel Android 17 build CP3A.260905.009 install rejection. This cloud cannot confirm an installation on that phone; the exact package-manager error is still required if the new APK is rejected. No data reset or signing-key replacement is introduced.
-
-Build toolchain: JDK 21, AGP 9.3.3, checksum-pinned Gradle 9.5.0, Android SDK 37.0 / Build Tools 37.0.0, Robolectric 4.17. The complete source archive contains pinned extractor/nanojson and corresponding jump3r/desugar sources and notices. Google login still needs OAuth configuration and cannot supply YouTube watch history.
-
-APK SHA-256: `17d875f0bb749681a72073ef04c8658b6ae17d956f92e8d57997d0a233f4ce39`
+APK SHA-256: `2597ccaf04e1bd433e3da6cfd62dfe0fa414b4a5ef51ee9469c85581e7c63759`
 
 ## Phone acceptance still required
 
-1. Install MuseDock-0.6.0.apk over Soundzy/Cadence and confirm retained playlists, downloads and account preferences. Android 10–17 are allowed by the SDK declarations; physical-device acceptance is still needed.
-2. Search a known artist using Songs and Albums; verify album artwork and track order, paging, playback and saving. Check the optional YouTube videos filter.
-3. Play online and offline songs; turn Equalizer on/off and compare presets and sliders with speakers, wired/Bluetooth headphones and output changes. Confirm persistence after restarting playback.
-4. Open Lyrics for known supported recordings, including cached lyrics in airplane mode. Verify highlighting, pause/resume, seek, manual scrolling/follow, track changes and missing/instrumental/plain states.
-5. Verify background playback, downloads, MP3 conversion, keyboard/navigation insets and export on Android 10+ devices. These have not been exercised on physical hardware here.
-6. If Pixel Android 17 installation still fails, run `adb install -r MuseDock-0.6.0.apk` and retain the full error; see INSTALLATION.md.
+1. Install MuseDock-0.7.0.apk as an update, preserving playlists, offline files and compatible account settings.
+2. Open Library and confirm the compact typography, navigation arrows and smaller rows on the actual phone/font scale.
+3. Use ⋯ → Appearance for all four themes. Check status/navigation icons, dialogs, queue, player and equalizer, then restart to verify persistence. Change system night mode while using Material.
+4. Select English or Punjabi through the language chip/menu, search songs/albums, page through results and open recommendations. Test direct links and All languages.
+5. Open Now playing → ⋯ → Equalizer. Confirm the compact entry, absence of lyrics and large extra buttons, and audible effects with online/offline tracks and available audio outputs.
+6. Check background playback, downloads, MP3 conversion and export on Android 10+ hardware. If the affected Pixel still rejects installation, retain the exact result of `adb install -r MuseDock-0.7.0.apk`; see INSTALLATION.md.
